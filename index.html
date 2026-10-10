@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qafila — Manager Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="app-body">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand">Qafila</span>
+      <span class="brand-sub">Manager Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <span id="manager-name" class="manager-name">—</span>
+      <button id="logout-btn" class="btn-secondary">Log out</button>
+    </div>
+  </header>
+
+  <!-- Status strip -->
+  <section class="status-strip">
+    <div class="status-item">
+      <span class="status-label">Active shifts</span>
+      <span id="stat-active-shifts" class="status-value">0</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Active alerts</span>
+      <span id="stat-active-alerts" class="status-value">0</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Predictive alerts</span>
+      <span id="stat-predictions" class="status-value">0</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Connection</span>
+      <span id="stat-connection" class="status-value">Disconnected</span>
+    </div>
+  </section>
+
+  <!-- Main layout -->
+  <main class="layout">
+
+    <!-- Vehicles column -->
+    <section class="col-vehicles">
+      <h2 class="section-title">Vehicles on shift</h2>
+      <div id="vehicle-grid" class="vehicle-grid">
+        <p class="empty">No active shifts.</p>
+      </div>
+    </section>
+
+    <!-- Right column -->
+    <aside class="col-side">
+
+      <!-- Live alerts -->
+      <section class="panel">
+        <h2 class="section-title">Live alerts</h2>
+        <div id="alerts-list" class="alerts-list">
+          <p class="empty">No alerts.</p>
+        </div>
+      </section>
+
+      <!-- Predictive alerts -->
+      <section class="panel">
+        <h2 class="section-title">Maintenance predictions</h2>
+        <div id="predictions-list" class="predictions-list">
+          <p class="empty">No predictions.</p>
+        </div>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <!-- Emergency popup container -->
+  <div id="popup-root" class="popup-root"></div>
+
+  <!-- Scripts -->
+  <script src="https://qafila-backend.onrender.com/socket.io/socket.io.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/popup.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

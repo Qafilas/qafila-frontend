@@ -1,34 +1,43 @@
 /* Qafila dashboard logic */
 
 (function () {
-  /* ---------- Guard ---------- */
   if (!getToken()) {
     location.href = 'login.html';
     return;
   }
 
   /* ---------- DOM refs ---------- */
-  const managerNameEl = document.getElementById('manager-name');
-  const logoutBtn = document.getElementById('logout-btn');
+  const managerNameEl     = document.getElementById('manager-name');
+  const logoutBtn         = document.getElementById('logout-btn');
+  const topStrip          = document.getElementById('top-strip');
 
-  const statActiveShifts = document.getElementById('stat-active-shifts');
-  const statActiveAlerts = document.getElementById('stat-active-alerts');
-  const statPredictions = document.getElementById('stat-predictions');
-  const statConnection = document.getElementById('stat-connection');
+  const statActiveShifts  = document.getElementById('stat-active-shifts');
+  const statActiveAlerts  = document.getElementById('stat-active-alerts');
+  const statPredictions   = document.getElementById('stat-predictions');
+  const statConnection    = document.getElementById('stat-connection');
 
-  const vehicleGrid = document.getElementById('vehicle-grid');
-  const alertsList = document.getElementById('alerts-list');
-  const predictionsList = document.getElementById('predictions-list');
+  const vehicleGrid       = document.getElementById('vehicle-grid');
+  const vehicleCount      = document.getElementById('vehicle-count');
+
+  const alertsList        = document.getElementById('alerts-list');
+  const alertsCount       = document.getElementById('alerts-count');
+
+  const predictionsList   = document.getElementById('predictions-list');
+  const predictionsCount  = document.getElementById('predictions-count');
+
+  let worstLevel = 'ok';
 
   /* ---------- Socket ---------- */
   const socket = io(API_BASE);
+
   socket.on('connect', () => {
     statConnection.textContent = 'Connected';
-    statConnection.className = 'status-value ok';
+    statConnection.className = 'v ok';
   });
+
   socket.on('disconnect', () => {
     statConnection.textContent = 'Disconnected';
-    statConnection.className = 'status-value crit';
+    statConnection.className = 'v crit';
   });
 
   socket.on('alert', (alert) => {
@@ -37,9 +46,9 @@
   });
 
   /* ---------- Helpers ---------- */
-  function el(tag, className, text) {
+  function el(tag, cls, text) {
     const e = document.createElement(tag);
-    if (className) e.className = className;
+    if (cls) e.className = cls;
     if (text !== undefined) e.textContent = text;
     return e;
   }
@@ -60,132 +69,133 @@
   }
 
   function severityFromAlerts(alerts) {
-    if (!alerts || alerts.length === 0) return 'normal';
-    if (alerts.some(a => a.level === 'red')) return 'critical';
-    return 'warning';
+    if (!alerts || alerts.length === 0) return 'ok';
+    if (alerts.some(a => a.level === 'red')) return 'crit';
+    return 'warn';
   }
 
   function labelForSeverity(sev) {
-    if (sev === 'critical') return 'Critical';
-    if (sev === 'warning') return 'Warning';
+    if (sev === 'crit') return 'Critical';
+    if (sev === 'warn') return 'Warning';
     return 'Normal';
   }
 
-  /* ---------- Render vehicle card ---------- */
+  function bumpWorst(sev) {
+    if (sev === 'crit') worstLevel = 'crit';
+    else if (sev === 'warn' && worstLevel !== 'crit') worstLevel = 'warn';
+  }
+
+  /* ---------- Vehicle card ---------- */
   function renderVehicleCard(item) {
     const { vehicle, driver, latest, alerts } = item;
-    const severity = severityFromAlerts(alerts);
+    const sev = severityFromAlerts(alerts);
+    bumpWorst(sev);
 
-    const card = el('div', 'vehicle-card');
+    const card = el('div', `vehicle-card ${sev}`);
 
     /* Head */
-    const head = el('div', 'vehicle-card-head');
-
+    const head = el('div', 'vehicle-head');
     const headLeft = el('div');
     headLeft.appendChild(el('div', 'vehicle-plate', vehicle.plate));
-    headLeft.appendChild(
-      el('div', 'vehicle-driver',
-        `${driver ? driver.name : 'Unknown driver'} · ${driver ? driver.employee_id : '—'}`)
-    );
+    headLeft.appendChild(el(
+      'div', 'vehicle-driver',
+      `${driver ? driver.name : 'Unknown driver'} · ${driver ? driver.employee_id : '—'}`
+    ));
     head.appendChild(headLeft);
-
-    const status = el('span', `vehicle-status ${severity}`, labelForSeverity(severity));
-    head.appendChild(status);
-
+    head.appendChild(el('span', `badge ${sev}`, labelForSeverity(sev)));
     card.appendChild(head);
 
-    /* Live readings */
+    /* Readings */
     const grid = el('div', 'reading-grid');
 
     const readings = [
-      { label: 'RPM', value: latest ? latest.rpm : null },
-      { label: 'Coolant', value: latest ? latest.coolant : null, unit: '°C',
-        warn: latest && latest.coolant >= 90 && latest.coolant < 105,
-        crit: latest && latest.coolant >= 105 },
-      { label: 'Speed', value: latest ? latest.speed : null, unit: ' km/h' },
-      { label: 'Load', value: latest ? latest.load : null, unit: '%' },
-      { label: 'Throttle', value: latest ? latest.throttle : null, unit: '%' },
-      { label: 'STFT', value: latest ? latest.stft : null, unit: '%' },
-      { label: 'LTFT', value: latest ? latest.ltft : null, unit: '%' },
-      { label: 'Voltage', value: latest ? latest.voltage : null, unit: ' V',
-        warn: latest && latest.voltage <= 13.5 && latest.voltage > 12.5,
-        crit: latest && latest.voltage <= 12.5 }
+      { l: 'RPM',      v: latest ? latest.rpm      : null },
+      { l: 'Coolant',  v: latest ? latest.coolant  : null, unit: '°C',
+        cls: latest && latest.coolant >= 105 ? 'crit' :
+             latest && latest.coolant >= 90  ? 'warn' : '' },
+      { l: 'Speed',    v: latest ? latest.speed    : null, unit: ' km/h' },
+      { l: 'Load',     v: latest ? latest.load     : null, unit: '%' },
+      { l: 'Throttle', v: latest ? latest.throttle : null, unit: '%' },
+      { l: 'STFT',     v: latest ? latest.stft     : null, unit: '%' },
+      { l: 'LTFT',     v: latest ? latest.ltft     : null, unit: '%' },
+      { l: 'Voltage',  v: latest ? latest.voltage  : null, unit: ' V',
+        cls: latest && latest.voltage <= 12.5 ? 'crit' :
+             latest && latest.voltage <= 13.5 ? 'warn' : '' }
     ];
 
     readings.forEach(r => {
       const box = el('div', 'reading');
-      box.appendChild(el('div', 'reading-label', r.label));
-      let cls = 'reading-value';
-      if (r.crit) cls += ' crit';
-      else if (r.warn) cls += ' warn';
-      const val = el('div', cls, fmt(r.value, r.unit || ''));
-      box.appendChild(val);
+      box.appendChild(el('div', 'rl', r.l));
+      box.appendChild(el('div', `rv ${r.cls || ''}`, fmt(r.v, r.unit || '')));
       grid.appendChild(box);
     });
 
     card.appendChild(grid);
 
     /* Flags */
-    const flags = el('div', 'flags');
-    flags.appendChild(el('div', 'flags-title', 'Active flags'));
+    const flags = el('div', 'flags-block');
+    flags.appendChild(el('div', 'flags-label', 'Active flags'));
 
     if (!alerts || alerts.length === 0) {
-      flags.appendChild(el('div', 'flag-line', 'No active flags'));
+      const f = el('div', 'flag ok');
+      f.appendChild(el('span', 'dot'));
+      f.appendChild(el('span', '', 'No active flags'));
+      flags.appendChild(f);
     } else {
       alerts.slice(0, 6).forEach(a => {
-        const line = el(
-          'div',
-          `flag-line ${a.level === 'red' ? 'crit' : 'warn'}`,
-          `${a.level === 'red' ? 'Critical' : 'Warning'} · ${a.message || a.parameter}`
-        );
-        flags.appendChild(line);
+        const cls = a.level === 'red' ? 'crit' : 'warn';
+        const f = el('div', `flag ${cls}`);
+        f.appendChild(el('span', 'dot'));
+        f.appendChild(el('span', '', a.message || a.parameter || '—'));
+        flags.appendChild(f);
       });
     }
 
     card.appendChild(flags);
 
-    /* Last upload */
-    const upload = el('div', 'flags');
-    upload.style.marginTop = '0.4rem';
-    upload.appendChild(
-      el('div', 'flag-line', `Last upload: ${latest ? timeAgo(latest.ts) : '—'}`)
-    );
-    card.appendChild(upload);
+    /* Footer */
+    const foot = el('div', 'card-foot');
+    foot.appendChild(el('span', '', `Last upload: ${latest ? timeAgo(latest.ts) : '—'}`));
 
-    /* Actions */
     const actions = el('div', 'card-actions');
 
-    const callBtn = el('button', '', 'Call driver');
+    const callBtn = el('button', 'btn', 'Call driver');
     callBtn.addEventListener('click', () => {
       if (driver && driver.phone) window.location.href = `tel:${driver.phone}`;
     });
     actions.appendChild(callBtn);
 
-    const shiftBtn = el('button', '', 'View shift');
+    const shiftBtn = el('button', 'btn', 'View shift');
     shiftBtn.addEventListener('click', () => {
       location.href = `shift.html?id=${item.shift_id}`;
     });
     actions.appendChild(shiftBtn);
 
-    card.appendChild(actions);
+    foot.appendChild(actions);
+    card.appendChild(foot);
 
     return card;
   }
 
-  /* ---------- Load latest telemetry ---------- */
+  /* ---------- Load latest ---------- */
   async function loadLatest() {
     try {
       const data = await apiFetch('/api/telemetry/latest');
       vehicleGrid.innerHTML = '';
+      worstLevel = 'ok';
 
       if (!data || data.length === 0) {
-        const p = el('p', 'empty', 'No active shifts.');
-        vehicleGrid.appendChild(p);
+        vehicleGrid.appendChild(el('p', 'empty', 'No active shifts.'));
+        vehicleCount.textContent = '0';
       } else {
         data.forEach(item => vehicleGrid.appendChild(renderVehicleCard(item)));
+        vehicleCount.textContent = String(data.length);
       }
 
       statActiveShifts.textContent = String(data ? data.length : 0);
+
+      /* Top strip colour = worst level across all vehicles */
+      topStrip.className = 'top-strip ' + worstLevel;
     } catch (err) {
       console.error('[dashboard] loadLatest failed:', err.message);
     }
@@ -199,23 +209,34 @@
 
       if (!data || data.length === 0) {
         alertsList.appendChild(el('p', 'empty', 'No alerts.'));
+        alertsCount.textContent = '0';
         statActiveAlerts.textContent = '0';
+        statActiveAlerts.className = 'v';
         return;
       }
 
+      alertsCount.textContent = String(data.length);
       statActiveAlerts.textContent = String(data.length);
 
+      const hasCrit = data.some(a => a.level === 'red');
+      statActiveAlerts.className = 'v ' + (hasCrit ? 'crit' : 'warn');
+
       data.slice(0, 30).forEach(a => {
-        const item = el('div', `alert-item ${a.level === 'red' ? 'red' : 'yellow'}`);
+        const cls = a.level === 'red' ? 'crit' : 'warn';
+        const item = el('div', `alert-item ${cls}`);
 
         const head = el('div', 'alert-head');
-        head.appendChild(el('span', 'level', a.level === 'red' ? 'Critical' : 'Warning'));
+        head.appendChild(el(
+          'span', 'alert-level',
+          a.level === 'red' ? 'Critical' : 'Warning'
+        ));
         head.appendChild(el('span', 'alert-time', timeAgo(a.ts)));
         item.appendChild(head);
 
-        const msg = el('div', 'alert-msg',
-          `${a.vehicle_plate || '—'} · ${a.driver_name || '—'} · ${a.message || a.parameter}`);
-        item.appendChild(msg);
+        item.appendChild(el(
+          'div', 'alert-msg',
+          `${a.vehicle_plate || '—'} · ${a.driver_name || '—'} · ${a.message || a.parameter || ''}`
+        ));
 
         alertsList.appendChild(item);
       });
@@ -232,23 +253,26 @@
 
       if (!data || data.length === 0) {
         predictionsList.appendChild(el('p', 'empty', 'No predictions.'));
+        predictionsCount.textContent = '0';
         statPredictions.textContent = '0';
         return;
       }
 
-      statPredictions.textContent = String(data.length);
+      predictionsCount.textContent = String(data.length);
+      statPredictions.textContent  = String(data.length);
 
       data.forEach(p => {
         const item = el('div', 'prediction-item');
 
         const head = el('div', 'prediction-head');
-        head.appendChild(el('span', 'level', p.stream));
+        head.appendChild(el('span', 'alert-level', p.stream));
         head.appendChild(el('span', 'prediction-time', timeAgo(p.ts)));
         item.appendChild(head);
 
-        const msg = el('div', 'prediction-msg',
-          `${p.vehicle_plate || '—'} · slope ${p.slope} (threshold ${p.threshold})`);
-        item.appendChild(msg);
+        item.appendChild(el(
+          'div', 'prediction-msg',
+          `${p.vehicle_plate || '—'} · slope ${p.slope} (threshold ${p.threshold})`
+        ));
 
         predictionsList.appendChild(item);
       });
@@ -257,13 +281,12 @@
     }
   }
 
-  /* ---------- Manager info + logout ---------- */
+  /* ---------- Manager + logout ---------- */
   function decodeToken() {
     try {
       const t = getToken();
       if (!t) return null;
-      const payload = JSON.parse(atob(t.split('.')[1]));
-      return payload;
+      return JSON.parse(atob(t.split('.')[1]));
     } catch (_) {
       return null;
     }
@@ -271,8 +294,7 @@
 
   function setupManager() {
     const payload = decodeToken();
-    if (payload && payload.name) managerNameEl.textContent = payload.name;
-    else managerNameEl.textContent = '—';
+    managerNameEl.textContent = payload && payload.name ? payload.name : '—';
   }
 
   logoutBtn.addEventListener('click', () => {

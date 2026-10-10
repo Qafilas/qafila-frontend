@@ -3,81 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qafila — Manager Dashboard</title>
+  <title>Qafila — Dashboard</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="app-body">
+<body>
 
-  <!-- Top bar -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="brand">Qafila</span>
-      <span class="brand-sub">Manager Dashboard</span>
+  <div class="top-strip ok" id="top-strip"></div>
+
+  <header class="app-topbar">
+    <div class="app-topbar-left">
+      <span class="app-brand">Qafila</span>
+      <span class="app-page-title">Manager Dashboard</span>
     </div>
-    <div class="topbar-right">
-      <span id="manager-name" class="manager-name">—</span>
-      <button id="logout-btn" class="btn-secondary">Log out</button>
+    <div class="app-topbar-right">
+      <span class="app-manager" id="manager-name">—</span>
+      <button class="btn" id="logout-btn">Log out</button>
     </div>
   </header>
 
-  <!-- Status strip -->
   <section class="status-strip">
-    <div class="status-item">
-      <span class="status-label">Active shifts</span>
-      <span id="stat-active-shifts" class="status-value">0</span>
+    <div class="status-cell">
+      <div class="k">Active shifts</div>
+      <div class="v" id="stat-active-shifts">0</div>
     </div>
-    <div class="status-item">
-      <span class="status-label">Active alerts</span>
-      <span id="stat-active-alerts" class="status-value">0</span>
+    <div class="status-cell">
+      <div class="k">Active alerts</div>
+      <div class="v" id="stat-active-alerts">0</div>
     </div>
-    <div class="status-item">
-      <span class="status-label">Predictive alerts</span>
-      <span id="stat-predictions" class="status-value">0</span>
+    <div class="status-cell">
+      <div class="k">Predictive alerts</div>
+      <div class="v" id="stat-predictions">0</div>
     </div>
-    <div class="status-item">
-      <span class="status-label">Connection</span>
-      <span id="stat-connection" class="status-value">Disconnected</span>
+    <div class="status-cell">
+      <div class="k">Connection</div>
+      <div class="v" id="stat-connection">Disconnected</div>
     </div>
   </section>
 
-  <!-- Main layout -->
-  <main class="layout">
+  <main class="app-layout">
 
-    <!-- Vehicles column -->
-    <section class="col-vehicles">
-      <h2 class="section-title">Vehicles on shift</h2>
-      <div id="vehicle-grid" class="vehicle-grid">
-        <p class="empty">No active shifts.</p>
+    <section>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Vehicles on shift</div>
+          <div class="panel-count" id="vehicle-count">0</div>
+        </div>
+        <div id="vehicle-grid" class="vehicle-grid">
+          <p class="empty">No active shifts.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Right column -->
-    <aside class="col-side">
+    <aside style="display:flex; flex-direction:column; gap:16px;">
 
-      <!-- Live alerts -->
-      <section class="panel">
-        <h2 class="section-title">Live alerts</h2>
-        <div id="alerts-list" class="alerts-list">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Live alerts</div>
+          <div class="panel-count" id="alerts-count">0</div>
+        </div>
+        <div id="alerts-list" class="alert-list">
           <p class="empty">No alerts.</p>
         </div>
-      </section>
+      </div>
 
-      <!-- Predictive alerts -->
-      <section class="panel">
-        <h2 class="section-title">Maintenance predictions</h2>
-        <div id="predictions-list" class="predictions-list">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Maintenance predictions</div>
+          <div class="panel-count" id="predictions-count">0</div>
+        </div>
+        <div id="predictions-list" class="prediction-list">
           <p class="empty">No predictions.</p>
         </div>
-      </section>
+      </div>
 
     </aside>
 
   </main>
 
-  <!-- Emergency popup container -->
   <div id="popup-root" class="popup-root"></div>
 
-  <!-- Scripts -->
   <script src="https://qafila-backend.onrender.com/socket.io/socket.io.js"></script>
   <script src="js/api.js"></script>
   <script src="js/popup.js"></script>

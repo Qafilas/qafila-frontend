@@ -6,60 +6,72 @@
   <title>Qafila — Shift Report</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="app-body">
+<body>
 
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="brand">Qafila</span>
-      <span class="brand-sub">Shift Report</span>
+  <div class="top-strip ok"></div>
+
+  <header class="app-topbar">
+    <div class="app-topbar-left">
+      <span class="app-brand">Qafila</span>
+      <span class="app-page-title">Shift Report</span>
     </div>
-    <div class="topbar-right">
-      <span id="manager-name" class="manager-name">—</span>
-      <a href="index.html" class="btn-secondary" style="text-decoration:none;">Back</a>
-      <button id="logout-btn" class="btn-secondary">Log out</button>
+    <div class="app-topbar-right">
+      <span class="app-manager" id="manager-name">—</span>
+      <a href="index.html" class="btn" style="text-decoration:none;">Back</a>
+      <button class="btn" id="logout-btn">Log out</button>
     </div>
   </header>
 
-  <main class="layout" style="grid-template-columns: 1fr;">
+  <main class="shift-wrap">
 
-    <section>
-      <h2 class="section-title">Shift</h2>
-      <div id="shift-meta" class="panel">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Shift</div>
+      </div>
+      <div id="shift-meta" class="kv-list">
         <p class="empty">Loading…</p>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <h2 class="section-title">Driver behavior summary</h2>
-      <div id="behavior-panel" class="panel">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Driver behavior summary</div>
+      </div>
+      <div id="behavior-panel">
         <p class="empty">Loading…</p>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <h2 class="section-title">Events</h2>
-      <div id="events-panel" class="panel">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Events</div>
+      </div>
+      <div id="events-panel" class="alert-list">
         <p class="empty">No events.</p>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <h2 class="section-title">Alerts during this shift</h2>
-      <div id="alerts-panel" class="panel">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Alerts during this shift</div>
+      </div>
+      <div id="alerts-panel" class="alert-list">
         <p class="empty">No alerts.</p>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <h2 class="section-title">Maintenance predictions for this vehicle</h2>
-      <div id="predictions-panel" class="panel">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Maintenance predictions for this vehicle</div>
+      </div>
+      <div id="predictions-panel" class="prediction-list">
         <p class="empty">No predictions.</p>
       </div>
-    </section>
+    </div>
 
   </main>
 
-  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script src="https://qafila-backend.onrender.com/socket.io/socket.io.js"></script>
   <script src="js/api.js"></script>
   <script src="js/shift.js"></script>
 </body>

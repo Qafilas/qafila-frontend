@@ -1,0 +1,138 @@
+/* ============================================================================
+   QAFILA — Base
+   Tokens, reset, buttons, top strip, brand mark, utilities, scrollbar
+   ========================================================================= */
+
+
+/* ---------- Design tokens ---------- */
+:root {
+  --bg:           #0b1220;
+  --bg-grad:      radial-gradient(1200px 600px at 20% -10%, #12203b 0%, #0b1220 55%);
+  --surface:      #111a2e;
+  --surface-2:    #16213c;
+  --surface-3:    #1b2948;
+
+  --border:       #1f2c4a;
+  --border-strong:#2b3a63;
+
+  --text:         #e6edf7;
+  --text-2:       #8b9bb4;
+  --text-3:       #5b6b8a;
+
+  --accent:       #4f9cf9;
+  --accent-hover: #6aa9ff;
+  --accent-soft:  rgba(79, 156, 249, 0.12);
+
+  --ok:           #10b981;
+  --ok-soft:      rgba(16, 185, 129, 0.12);
+  --warn:         #f59e0b;
+  --warn-soft:    rgba(245, 158, 11, 0.12);
+  --crit:         #ef4444;
+  --crit-soft:    rgba(239, 68, 68, 0.12);
+
+  --radius:       10px;
+  --radius-sm:    6px;
+  --radius-xs:    4px;
+
+  --pad:          20px;
+  --gap:          16px;
+
+  --font:         -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+                  Roboto, Helvetica, Arial, sans-serif;
+  --mono:         "SF Mono", "JetBrains Mono", "Menlo", monospace;
+}
+
+
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; min-height: 100vh; }
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  background-image: var(--bg-grad);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+
+p { margin: 0; }
+
+button { font-family: inherit; font-size: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; font-size: inherit; }
+
+
+/* ---------- Top strip ---------- */
+.top-strip {
+  height: 3px;
+  width: 100%;
+  background: var(--accent);
+  transition: background 0.3s ease;
+}
+.top-strip.ok   { background: var(--ok); }
+.top-strip.warn { background: var(--warn); }
+.top-strip.crit { background: var(--crit); }
+
+
+/* ---------- Brand mark ---------- */
+.brand-mark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.brand-mark span { display: block; width: 3px; border-radius: 1px; background: var(--accent); }
+.brand-mark span:nth-child(1) { height: 8px; }
+.brand-mark span:nth-child(2) { height: 14px; }
+.brand-mark span:nth-child(3) { height: 11px; }
+
+
+/* ---------- Buttons ---------- */
+.btn {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0b1220;
+  font-weight: 600;
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #0b1220;
+}
+
+.btn-danger { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+.btn-danger:hover { border-color: var(--crit); color: var(--crit); }
+
+
+/* ---------- Utilities ---------- */
+.hidden { display: none !important; }
+
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3a4d80; }

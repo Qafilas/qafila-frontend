@@ -1,0 +1,21 @@
+/* ============================================================================
+   QAFILA — Shift report page
+   ========================================================================= */
+
+.shift-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.paragraph {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-2);
+}
+
+.score-line { margin-top: 16px; font-size: 13px; color: var(--text); }
+.score-line strong { color: var(--accent); font-size: 16px; }

@@ -10,42 +10,58 @@
 
   <div class="top-strip ok" id="top-strip"></div>
 
+  <!-- ============================================================
+       Top bar
+       ============================================================ -->
   <header class="app-topbar">
     <div class="app-topbar-left">
+      <span class="brand-mark" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
       <span class="app-brand">Qafila</span>
       <span class="app-page-title">Manager Dashboard</span>
     </div>
+
     <nav class="app-nav">
       <a href="index.html" class="app-nav-link active">Dashboard</a>
       <a href="pages/drivers.html" class="app-nav-link">Drivers</a>
       <a href="pages/vehicles.html" class="app-nav-link">Vehicles</a>
       <a href="pages/shifts.html" class="app-nav-link">Shifts</a>
     </nav>
+
     <div class="app-topbar-right">
       <span class="app-manager" id="manager-name">—</span>
       <button class="btn" id="logout-btn">Log out</button>
     </div>
   </header>
 
-  <section class="status-strip">
-    <div class="status-cell">
-      <div class="k">Active shifts</div>
-      <div class="v" id="stat-active-shifts">0</div>
+  <!-- ============================================================
+       Hero status bar
+       ============================================================ -->
+  <section class="hero-bar">
+
+    <div class="hero-clock">
+      <div class="hero-clock-time" id="hero-time">--:--:--</div>
+      <div class="hero-clock-date" id="hero-date">—</div>
     </div>
-    <div class="status-cell">
-      <div class="k">Active alerts</div>
-      <div class="v" id="stat-active-alerts">0</div>
+
+    <div class="hero-summary">
+      <div class="hero-headline" id="hero-headline">Loading fleet state…</div>
+      <div class="hero-sub" id="hero-sub">Fetching live data from the cloud.</div>
     </div>
-    <div class="status-cell">
-      <div class="k">Predictive alerts</div>
-      <div class="v" id="stat-predictions">0</div>
+
+    <div class="hero-status">
+      <span class="hero-pill ok" id="hero-pill">
+        <span class="hero-pill-dot"></span>
+        <span class="hero-pill-text" id="hero-pill-text">Initialising</span>
+      </span>
     </div>
-    <div class="status-cell">
-      <div class="k">Connection</div>
-      <div class="v" id="stat-connection">Disconnected</div>
-    </div>
+
   </section>
 
+  <!-- ============================================================
+       Main layout
+       ============================================================ -->
   <main class="app-layout">
 
     <section>
@@ -54,37 +70,73 @@
           <div class="panel-title">Vehicles on shift</div>
           <div class="panel-count" id="vehicle-count">0</div>
         </div>
+
         <div id="vehicle-grid" class="vehicle-grid">
           <p class="empty">No active shifts.</p>
         </div>
       </div>
     </section>
 
-    <aside style="display:flex; flex-direction:column; gap:16px;">
+    <!-- Right column: Attention console -->
+    <aside class="console">
 
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Live alerts</div>
-          <div class="panel-count" id="alerts-count">0</div>
-        </div>
-        <div id="alerts-list" class="alert-list">
-          <p class="empty">No alerts.</p>
-        </div>
+      <div class="console-tabs">
+        <button class="console-tab active" data-tab="alerts">
+          Alerts
+          <span class="console-tab-count" id="alerts-tab-count">0</span>
+        </button>
+        <button class="console-tab" data-tab="predictions">
+          Predictions
+          <span class="console-tab-count" id="predictions-tab-count">0</span>
+        </button>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Maintenance predictions</div>
-          <div class="panel-count" id="predictions-count">0</div>
+      <div class="console-body">
+        <div class="console-panel" id="console-panel-alerts">
+          <div id="alerts-list" class="alert-list">
+            <div class="empty-soft">
+              <div class="empty-soft-title">No active alerts</div>
+              <div class="empty-soft-sub">Live alerts will appear here in real time.</div>
+            </div>
+          </div>
         </div>
-        <div id="predictions-list" class="prediction-list">
-          <p class="empty">No predictions.</p>
+
+        <div class="console-panel" id="console-panel-predictions" hidden>
+          <div id="predictions-list" class="prediction-list">
+            <div class="empty-soft">
+              <div class="empty-soft-title">No predictions</div>
+              <div class="empty-soft-sub">The weekly OLS job will populate this panel.</div>
+            </div>
+          </div>
         </div>
       </div>
 
     </aside>
 
   </main>
+
+  <!-- ============================================================
+       Footer summary
+       ============================================================ -->
+  <footer class="app-footer">
+    <div class="footer-item">
+      <span class="footer-label">Vehicles</span>
+      <span class="footer-value" id="foot-vehicles">0</span>
+    </div>
+    <div class="footer-item">
+      <span class="footer-label">Drivers</span>
+      <span class="footer-value" id="foot-drivers">0</span>
+    </div>
+    <div class="footer-item">
+      <span class="footer-label">Shifts this week</span>
+      <span class="footer-value" id="foot-shifts">0</span>
+    </div>
+    <div class="footer-spacer"></div>
+    <div class="footer-item">
+      <span class="footer-label">Connection</span>
+      <span class="footer-value" id="foot-connection">Disconnected</span>
+    </div>
+  </footer>
 
   <div id="popup-root" class="popup-root"></div>
 

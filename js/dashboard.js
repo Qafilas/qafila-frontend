@@ -1,4 +1,4 @@
-/* Qafila dashboard logic */
+/* Qafila dashboard logic — sidebar layout */
 
 (function () {
   if (!getToken()) {
@@ -12,31 +12,35 @@
 
   const topStrip        = document.getElementById('top-strip');
 
+  const sidebar         = document.getElementById('sidebar');
+  const sidebarToggle   = document.getElementById('sidebar-toggle');
+  const sidebarLiveDot  = document.getElementById('sidebar-live-dot');
+  const sidebarLiveText = document.getElementById('sidebar-live-text');
+
   const managerNameEl   = document.getElementById('manager-name');
   const logoutBtn       = document.getElementById('logout-btn');
 
   const heroTime        = document.getElementById('hero-time');
   const heroDate        = document.getElementById('hero-date');
-  const heroHeadline    = document.getElementById('hero-headline');
-  const heroSub         = document.getElementById('hero-sub');
   const heroPill        = document.getElementById('hero-pill');
   const heroPillText    = document.getElementById('hero-pill-text');
+
+  const metricShifts    = document.getElementById('metric-shifts');
+  const metricCrit      = document.getElementById('metric-crit');
+  const metricWarn      = document.getElementById('metric-warn');
+  const metricPred      = document.getElementById('metric-pred');
 
   const vehicleGrid     = document.getElementById('vehicle-grid');
   const vehicleCount    = document.getElementById('vehicle-count');
 
-  const alertsList      = document.getElementById('alerts-list');
-  const alertsTabCount  = document.getElementById('alerts-tab-count');
-
-  const predictionsList    = document.getElementById('predictions-list');
-  const predictionsTabCount= document.getElementById('predictions-tab-count');
+  const alertsMini      = document.getElementById('alerts-mini');
+  const predictionsMini = document.getElementById('predictions-mini');
 
   const footVehicles    = document.getElementById('foot-vehicles');
   const footDrivers     = document.getElementById('foot-drivers');
   const footShifts      = document.getElementById('foot-shifts');
   const footConnection  = document.getElementById('foot-connection');
 
-  /* Expanded vehicle cards (by shift_id) */
   const expandedCards = new Set();
 
   /* ============================================================
@@ -78,6 +82,16 @@
   }
 
   /* ============================================================
+     Mobile sidebar toggle
+     ============================================================ */
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+  }
+
+  /* ============================================================
      Live clock
      ============================================================ */
 
@@ -90,7 +104,8 @@
 
     const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    heroDate.textContent = `${days[now.getDay()]} · ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    heroDate.textContent =
+      `${days[now.getDay()]} · ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
   }
 
   tickClock();
@@ -105,11 +120,13 @@
   socket.on('connect', () => {
     footConnection.textContent = 'Online';
     footConnection.className = 'footer-value ok';
+    setSidebarStatus('ok', 'Cloud connected');
   });
 
   socket.on('disconnect', () => {
     footConnection.textContent = 'Offline';
     footConnection.className = 'footer-value crit';
+    setSidebarStatus('crit', 'Cloud offline');
   });
 
   socket.on('alert', (alert) => {
@@ -117,29 +134,16 @@
     loadAlerts();
   });
 
+  function setSidebarStatus(level, text) {
+    sidebarLiveDot.className = 'sidebar-live-dot ' + level;
+    sidebarLiveText.textContent = text;
+  }
+
   /* ============================================================
-     Hero summary
+     Hero pill + top strip
      ============================================================ */
 
-  function updateHero(data, worst) {
-    const total = data ? data.length : 0;
-    const crit  = data ? data.filter(d => severityFromAlerts(d.alerts) === 'crit').length : 0;
-    const warn  = data ? data.filter(d => severityFromAlerts(d.alerts) === 'warn').length : 0;
-
-    if (total === 0) {
-      heroHeadline.textContent = 'No vehicles on shift';
-      heroSub.textContent      = 'Waiting for the first card tap.';
-    } else {
-      const veh = total === 1 ? 'vehicle' : 'vehicles';
-      heroHeadline.textContent = `${total} ${veh} on shift`;
-
-      const parts = [];
-      if (crit > 0) parts.push(`${crit} critical`);
-      if (warn > 0) parts.push(`${warn} warning`);
-      if (parts.length === 0) parts.push('all normal');
-      heroSub.textContent = parts.join(' · ');
-    }
-
+  function updateHeroPill(worst) {
     heroPill.className = `hero-pill ${worst}`;
     if (worst === 'crit')      heroPillText.textContent = 'Critical active';
     else if (worst === 'warn') heroPillText.textContent = 'Warning active';
@@ -147,7 +151,7 @@
   }
 
   /* ============================================================
-     Vehicle card
+     Vehicle card (same visual language as before)
      ============================================================ */
 
   function renderVehicleCard(item) {
@@ -156,7 +160,7 @@
 
     const card = el('div', `vehicle-card ${sev}`);
 
-    /* --- Head --- */
+    /* Head */
     const head = el('div', 'vehicle-head');
     const headLeft = el('div');
     headLeft.appendChild(el('div', 'vehicle-plate', vehicle.plate));
@@ -178,7 +182,7 @@
     head.appendChild(el('span', `badge ${sev}`, labelForSeverity(sev)));
     card.appendChild(head);
 
-    /* --- Primary readings --- */
+    /* Primary readings */
     const grid = el('div', 'reading-grid');
     const primary = [
       { l: 'RPM',     v: latest ? latest.rpm     : null },
@@ -190,7 +194,6 @@
         cls: latest && latest.voltage <= 12.5 ? 'crit' :
              latest && latest.voltage <= 13.5 ? 'warn' : '' }
     ];
-
     primary.forEach(r => {
       const box = el('div', 'reading');
       box.appendChild(el('div', 'rl', r.l));
@@ -199,9 +202,10 @@
     });
     card.appendChild(grid);
 
-    /* --- Expand toggle --- */
+    /* Expand toggle */
     const isExpanded = expandedCards.has(shift_id);
-    const toggle = el('button', 'expand-toggle', isExpanded ? 'Hide extra readings' : 'Show all readings');
+    const toggle = el('button', 'expand-toggle',
+      isExpanded ? 'Hide extra readings' : 'Show all readings');
     toggle.addEventListener('click', () => {
       if (expandedCards.has(shift_id)) expandedCards.delete(shift_id);
       else expandedCards.add(shift_id);
@@ -209,7 +213,7 @@
     });
     card.appendChild(toggle);
 
-    /* --- Secondary readings (collapsible) --- */
+    /* Secondary readings */
     if (isExpanded) {
       const grid2 = el('div', 'reading-grid secondary');
       const secondary = [
@@ -227,7 +231,7 @@
       card.appendChild(grid2);
     }
 
-    /* --- Flags --- */
+    /* Flags */
     const flags = el('div', 'flags-block');
     flags.appendChild(el('div', 'flags-label', 'Active flags'));
 
@@ -247,7 +251,7 @@
     }
     card.appendChild(flags);
 
-    /* --- Footer --- */
+    /* Footer */
     const foot = el('div', 'card-foot');
     foot.appendChild(el('span', '', `Last upload: ${latest ? timeAgo(latest.ts) : '—'}`));
 
@@ -274,7 +278,7 @@
   }
 
   /* ============================================================
-     Loaders
+     Data loaders
      ============================================================ */
 
   let lastData = null;
@@ -286,22 +290,36 @@
 
       vehicleGrid.innerHTML = '';
       let worst = 'ok';
+      let critCount = 0;
+      let warnCount = 0;
 
       if (!data || data.length === 0) {
-        vehicleGrid.appendChild(el('p', 'empty', 'No active shifts.'));
+        const soft = el('div', 'empty-soft');
+        soft.appendChild(el('div', 'empty-soft-title', 'No active shifts'));
+        soft.appendChild(el('div', 'empty-soft-sub',
+          'Vehicles will appear here once a driver taps their card.'));
+        vehicleGrid.appendChild(soft);
         vehicleCount.textContent = '0';
       } else {
         data.forEach(item => {
           const sev = severityFromAlerts(item.alerts);
-          if (sev === 'crit') worst = 'crit';
-          else if (sev === 'warn' && worst !== 'crit') worst = 'warn';
+          if (sev === 'crit') { worst = 'crit'; critCount++; }
+          else if (sev === 'warn') { if (worst !== 'crit') worst = 'warn'; warnCount++; }
           vehicleGrid.appendChild(renderVehicleCard(item));
         });
         vehicleCount.textContent = String(data.length);
       }
 
+      metricShifts.textContent = String(data ? data.length : 0);
+      metricCrit.textContent   = String(critCount);
+      metricWarn.textContent   = String(warnCount);
+
       topStrip.className = 'top-strip ' + worst;
-      updateHero(data, worst);
+      updateHeroPill(worst);
+
+      if (worst === 'crit')      setSidebarStatus('crit', 'Critical alert');
+      else if (worst === 'warn') setSidebarStatus('warn', 'Warning active');
+      else                       setSidebarStatus('ok', 'All systems normal');
     } catch (err) {
       console.error('[dashboard] loadLatest failed:', err.message);
     }
@@ -310,20 +328,17 @@
   async function loadAlerts() {
     try {
       const data = await apiFetch('/api/alerts/live');
-      alertsList.innerHTML = '';
+      alertsMini.innerHTML = '';
 
       if (!data || data.length === 0) {
-        alertsTabCount.textContent = '0';
-        const emptySoft = el('div', 'empty-soft');
-        emptySoft.appendChild(el('div', 'empty-soft-title', 'No active alerts'));
-        emptySoft.appendChild(el('div', 'empty-soft-sub', 'Live alerts will appear here in real time.'));
-        alertsList.appendChild(emptySoft);
+        const soft = el('div', 'empty-soft');
+        soft.appendChild(el('div', 'empty-soft-title', 'No active alerts'));
+        soft.appendChild(el('div', 'empty-soft-sub', 'Live alerts will appear here.'));
+        alertsMini.appendChild(soft);
         return;
       }
 
-      alertsTabCount.textContent = String(data.length);
-
-      data.slice(0, 40).forEach(a => {
+      data.slice(0, 5).forEach(a => {
         const cls = a.level === 'red' ? 'crit' : 'warn';
         const item = el('div', `alert-item ${cls}`);
 
@@ -336,7 +351,7 @@
         item.appendChild(el('div', 'alert-msg',
           `${a.vehicle_plate || '—'} · ${a.driver_name || '—'} · ${a.message || a.parameter || ''}`));
 
-        alertsList.appendChild(item);
+        alertsMini.appendChild(item);
       });
     } catch (err) {
       console.error('[dashboard] loadAlerts failed:', err.message);
@@ -346,20 +361,19 @@
   async function loadPredictions() {
     try {
       const data = await apiFetch('/api/predictions?resolved=0&limit=30');
-      predictionsList.innerHTML = '';
+      predictionsMini.innerHTML = '';
+
+      metricPred.textContent = String(data ? data.length : 0);
 
       if (!data || data.length === 0) {
-        predictionsTabCount.textContent = '0';
-        const emptySoft = el('div', 'empty-soft');
-        emptySoft.appendChild(el('div', 'empty-soft-title', 'No predictions'));
-        emptySoft.appendChild(el('div', 'empty-soft-sub', 'The weekly OLS job will populate this panel.'));
-        predictionsList.appendChild(emptySoft);
+        const soft = el('div', 'empty-soft');
+        soft.appendChild(el('div', 'empty-soft-title', 'No predictions'));
+        soft.appendChild(el('div', 'empty-soft-sub', 'The weekly job populates this.'));
+        predictionsMini.appendChild(soft);
         return;
       }
 
-      predictionsTabCount.textContent = String(data.length);
-
-      data.forEach(p => {
+      data.slice(0, 5).forEach(p => {
         const item = el('div', 'prediction-item');
 
         const head = el('div', 'prediction-head');
@@ -370,16 +384,12 @@
         item.appendChild(el('div', 'prediction-msg',
           `${p.vehicle_plate || '—'} · slope ${p.slope} (threshold ${p.threshold})`));
 
-        predictionsList.appendChild(item);
+        predictionsMini.appendChild(item);
       });
     } catch (err) {
       console.error('[dashboard] loadPredictions failed:', err.message);
     }
   }
-
-  /* ============================================================
-     Footer summary (fetch drivers, vehicles, shifts counts)
-     ============================================================ */
 
   async function loadFooterStats() {
     try {
@@ -408,40 +418,29 @@
   }
 
   /* ============================================================
-     Console tabs
-     ============================================================ */
-
-  const consoleTabs = document.querySelectorAll('.console-tab');
-  const panelAlerts = document.getElementById('console-panel-alerts');
-  const panelPreds  = document.getElementById('console-panel-predictions');
-
-  consoleTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      consoleTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const which = tab.dataset.tab;
-      panelAlerts.hidden = which !== 'alerts';
-      panelPreds.hidden  = which !== 'predictions';
-    });
-  });
-
-  /* ============================================================
      Refresh helper (used by expand toggle)
      ============================================================ */
 
   function refresh() {
-    if (lastData) {
-      vehicleGrid.innerHTML = '';
-      let worst = 'ok';
-      lastData.forEach(item => {
-        const sev = severityFromAlerts(item.alerts);
-        if (sev === 'crit') worst = 'crit';
-        else if (sev === 'warn' && worst !== 'crit') worst = 'warn';
-        vehicleGrid.appendChild(renderVehicleCard(item));
-      });
-      topStrip.className = 'top-strip ' + worst;
-      updateHero(lastData, worst);
-    }
+    if (!lastData) return;
+    vehicleGrid.innerHTML = '';
+    let worst = 'ok';
+    let critCount = 0;
+    let warnCount = 0;
+
+    lastData.forEach(item => {
+      const sev = severityFromAlerts(item.alerts);
+      if (sev === 'crit') { worst = 'crit'; critCount++; }
+      else if (sev === 'warn') { if (worst !== 'crit') worst = 'warn'; warnCount++; }
+      vehicleGrid.appendChild(renderVehicleCard(item));
+    });
+
+    metricShifts.textContent = String(lastData.length);
+    metricCrit.textContent   = String(critCount);
+    metricWarn.textContent   = String(warnCount);
+
+    topStrip.className = 'top-strip ' + worst;
+    updateHeroPill(worst);
   }
 
   /* ============================================================

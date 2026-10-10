@@ -4,139 +4,198 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Qafila — Dashboard</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
 </head>
-<body>
+<body class="app-body">
 
   <div class="top-strip ok" id="top-strip"></div>
 
-  <!-- ============================================================
-       Top bar
-       ============================================================ -->
-  <header class="app-topbar">
-    <div class="app-topbar-left">
-      <span class="brand-mark" aria-hidden="true">
-        <span></span><span></span><span></span>
-      </span>
-      <span class="app-brand">Qafila</span>
-      <span class="app-page-title">Manager Dashboard</span>
-    </div>
+  <div class="app-shell">
 
-    <nav class="app-nav">
-      <a href="index.html" class="app-nav-link active">Dashboard</a>
-      <a href="pages/drivers.html" class="app-nav-link">Drivers</a>
-      <a href="pages/vehicles.html" class="app-nav-link">Vehicles</a>
-      <a href="pages/shifts.html" class="app-nav-link">Shifts</a>
-    </nav>
+    <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
+    <aside class="sidebar" id="sidebar">
 
-    <div class="app-topbar-right">
-      <span class="app-manager" id="manager-name">—</span>
-      <button class="btn" id="logout-btn">Log out</button>
-    </div>
-  </header>
-
-  <!-- ============================================================
-       Hero status bar
-       ============================================================ -->
-  <section class="hero-bar">
-
-    <div class="hero-clock">
-      <div class="hero-clock-time" id="hero-time">--:--:--</div>
-      <div class="hero-clock-date" id="hero-date">—</div>
-    </div>
-
-    <div class="hero-summary">
-      <div class="hero-headline" id="hero-headline">Loading fleet state…</div>
-      <div class="hero-sub" id="hero-sub">Fetching live data from the cloud.</div>
-    </div>
-
-    <div class="hero-status">
-      <span class="hero-pill ok" id="hero-pill">
-        <span class="hero-pill-dot"></span>
-        <span class="hero-pill-text" id="hero-pill-text">Initialising</span>
-      </span>
-    </div>
-
-  </section>
-
-  <!-- ============================================================
-       Main layout
-       ============================================================ -->
-  <main class="app-layout">
-
-    <section>
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Vehicles on shift</div>
-          <div class="panel-count" id="vehicle-count">0</div>
-        </div>
-
-        <div id="vehicle-grid" class="vehicle-grid">
-          <p class="empty">No active shifts.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Right column: Attention console -->
-    <aside class="console">
-
-      <div class="console-tabs">
-        <button class="console-tab active" data-tab="alerts">
-          Alerts
-          <span class="console-tab-count" id="alerts-tab-count">0</span>
-        </button>
-        <button class="console-tab" data-tab="predictions">
-          Predictions
-          <span class="console-tab-count" id="predictions-tab-count">0</span>
-        </button>
+      <div class="sidebar-brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="sidebar-brand-text">Qafila</span>
       </div>
 
-      <div class="console-body">
-        <div class="console-panel" id="console-panel-alerts">
-          <div id="alerts-list" class="alert-list">
-            <div class="empty-soft">
-              <div class="empty-soft-title">No active alerts</div>
-              <div class="empty-soft-sub">Live alerts will appear here in real time.</div>
-            </div>
-          </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Fleet</div>
+        <a href="index.html" class="sidebar-link active">
+          <span class="sidebar-link-mark"></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="pages/drivers.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Drivers</span>
+        </a>
+        <a href="pages/vehicles.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Vehicles</span>
+        </a>
+        <a href="pages/shifts.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Shifts</span>
+        </a>
+
+        <div class="sidebar-section-label">Insights</div>
+        <a href="pages/predictions.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Predictions</span>
+        </a>
+
+        <div class="sidebar-section-label">System</div>
+        <a href="pages/settings.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="sidebar-live">
+          <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
+          <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
         </div>
 
-        <div class="console-panel" id="console-panel-predictions" hidden>
-          <div id="predictions-list" class="prediction-list">
-            <div class="empty-soft">
-              <div class="empty-soft-title">No predictions</div>
-              <div class="empty-soft-sub">The weekly OLS job will populate this panel.</div>
-            </div>
-          </div>
+        <div class="sidebar-user">
+          <div class="sidebar-user-name" id="manager-name">—</div>
+          <div class="sidebar-user-role">Manager</div>
         </div>
+
+        <button class="sidebar-logout" id="logout-btn">Log out</button>
       </div>
 
     </aside>
 
-  </main>
+    <!-- ============================================================
+         MAIN AREA
+         ============================================================ -->
+    <main class="main-area">
 
-  <!-- ============================================================
-       Footer summary
-       ============================================================ -->
-  <footer class="app-footer">
-    <div class="footer-item">
-      <span class="footer-label">Vehicles</span>
-      <span class="footer-value" id="foot-vehicles">0</span>
-    </div>
-    <div class="footer-item">
-      <span class="footer-label">Drivers</span>
-      <span class="footer-value" id="foot-drivers">0</span>
-    </div>
-    <div class="footer-item">
-      <span class="footer-label">Shifts this week</span>
-      <span class="footer-value" id="foot-shifts">0</span>
-    </div>
-    <div class="footer-spacer"></div>
-    <div class="footer-item">
-      <span class="footer-label">Connection</span>
-      <span class="footer-value" id="foot-connection">Disconnected</span>
-    </div>
-  </footer>
+      <!-- Top bar -->
+      <header class="main-topbar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="main-topbar-title">
+          <div class="main-topbar-page">Fleet overview</div>
+          <div class="main-topbar-date" id="hero-date">—</div>
+        </div>
+
+        <div class="main-topbar-right">
+          <div class="main-clock" id="hero-time">--:--:--</div>
+          <span class="hero-pill ok" id="hero-pill">
+            <span class="hero-pill-dot"></span>
+            <span class="hero-pill-text" id="hero-pill-text">Initialising</span>
+          </span>
+        </div>
+      </header>
+
+      <!-- Metric row -->
+      <section class="metric-row">
+
+        <div class="metric-card">
+          <div class="metric-label">Active shifts</div>
+          <div class="metric-value" id="metric-shifts">0</div>
+          <div class="metric-sub">Vehicles currently on route</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Critical</div>
+          <div class="metric-value crit" id="metric-crit">0</div>
+          <div class="metric-sub">Vehicles with red alerts</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Warning</div>
+          <div class="metric-value warn" id="metric-warn">0</div>
+          <div class="metric-sub">Vehicles with amber alerts</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Predictions</div>
+          <div class="metric-value accent" id="metric-pred">0</div>
+          <div class="metric-sub">Open maintenance forecasts</div>
+        </div>
+
+      </section>
+
+      <!-- Vehicles -->
+      <section class="main-section">
+        <div class="section-head">
+          <div class="section-title">Vehicles on shift</div>
+          <div class="section-count" id="vehicle-count">0</div>
+        </div>
+
+        <div id="vehicle-grid" class="vehicle-grid">
+          <div class="empty-soft">
+            <div class="empty-soft-title">No active shifts</div>
+            <div class="empty-soft-sub">Vehicles will appear here once a driver taps their card.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick attention strip -->
+      <section class="main-section">
+        <div class="section-head">
+          <div class="section-title">Attention</div>
+          <a href="pages/predictions.html" class="section-link">View all</a>
+        </div>
+
+        <div class="attention-strip">
+          <div class="attention-column">
+            <div class="attention-label">Live alerts</div>
+            <div class="attention-list" id="alerts-mini">
+              <div class="empty-soft">
+                <div class="empty-soft-title">No active alerts</div>
+                <div class="empty-soft-sub">Live alerts will appear here.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="attention-column">
+            <div class="attention-label">Predictions</div>
+            <div class="attention-list" id="predictions-mini">
+              <div class="empty-soft">
+                <div class="empty-soft-title">No predictions</div>
+                <div class="empty-soft-sub">The weekly job populates this.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer summary -->
+      <footer class="app-footer">
+        <div class="footer-item">
+          <span class="footer-label">Vehicles</span>
+          <span class="footer-value" id="foot-vehicles">0</span>
+        </div>
+        <div class="footer-item">
+          <span class="footer-label">Drivers</span>
+          <span class="footer-value" id="foot-drivers">0</span>
+        </div>
+        <div class="footer-item">
+          <span class="footer-label">Shifts this week</span>
+          <span class="footer-value" id="foot-shifts">0</span>
+        </div>
+        <div class="footer-spacer"></div>
+        <div class="footer-item">
+          <span class="footer-label">Connection</span>
+          <span class="footer-value" id="foot-connection">Disconnected</span>
+        </div>
+      </footer>
+
+    </main>
+  </div>
 
   <div id="popup-root" class="popup-root"></div>
 

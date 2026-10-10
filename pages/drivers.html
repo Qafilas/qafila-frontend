@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qafila — Drivers</title>
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+</head>
+<body>
+
+  <div class="top-strip ok"></div>
+
+  <header class="app-topbar">
+    <div class="app-topbar-left">
+      <span class="brand-mark" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+      <span class="app-brand">Qafila</span>
+      <span class="app-page-title">Drivers</span>
+    </div>
+
+    <nav class="app-nav">
+      <a href="../index.html" class="app-nav-link">Dashboard</a>
+      <a href="drivers.html" class="app-nav-link active">Drivers</a>
+      <a href="vehicles.html" class="app-nav-link">Vehicles</a>
+      <a href="shifts.html" class="app-nav-link">Shifts</a>
+    </nav>
+
+    <div class="app-topbar-right">
+      <span class="app-manager" id="manager-name">—</span>
+      <button class="btn" id="logout-btn">Log out</button>
+    </div>
+  </header>
+
+  <main class="app-layout page-single">
+
+    <!-- Add driver -->
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Add driver</div>
+      </div>
+
+      <form id="driver-form" class="form-grid">
+        <div class="form-row">
+          <label for="d-name">Full name</label>
+          <input type="text" id="d-name" required />
+        </div>
+
+        <div class="form-row">
+          <label for="d-employee">Employee ID</label>
+          <input type="text" id="d-employee" required placeholder="EMP-0142" />
+        </div>
+
+        <div class="form-row">
+          <label for="d-phone">Phone</label>
+          <input type="text" id="d-phone" placeholder="+974..." />
+        </div>
+
+        <div class="form-row">
+          <label for="d-license">License</label>
+          <input type="text" id="d-license" placeholder="QA-XXXXXX" />
+        </div>
+
+        <div class="form-row">
+          <label for="d-uid">RFID / NFC card UID (optional)</label>
+          <input type="text" id="d-uid" placeholder="e.g. 04A1B2C3D4" />
+          <div class="form-hint">Leave empty if the card is not yet issued.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="driver-submit">Add driver</button>
+          <p id="driver-error" class="auth-error" hidden></p>
+          <p id="driver-success" class="auth-success" hidden></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- Drivers list -->
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">All drivers</div>
+        <div class="panel-count" id="driver-count">0</div>
+      </div>
+
+      <div id="driver-list" class="data-list">
+        <p class="empty">Loading…</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/drivers.js"></script>
+</body>
+</html>

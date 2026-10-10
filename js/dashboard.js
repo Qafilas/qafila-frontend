@@ -167,7 +167,7 @@
 
     const shiftBtn = el('button', 'btn', 'View shift');
     shiftBtn.addEventListener('click', () => {
-      location.href = `shift.html?id=${item.shift_id}`;
+      location.href = `pages/shift.html?id=${item.shift_id}`;
     });
     actions.appendChild(shiftBtn);
 

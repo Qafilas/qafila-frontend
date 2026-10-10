@@ -2,7 +2,7 @@
 
 (function () {
   if (!getToken()) {
-    location.href = 'login.html';
+    location.href = '../login.html';
     return;
   }
 
@@ -146,7 +146,7 @@
 
   logoutBtn.addEventListener('click', () => {
     clearToken();
-    location.href = 'login.html';
+    location.href = '../login.html';
   });
 
   setupManager();

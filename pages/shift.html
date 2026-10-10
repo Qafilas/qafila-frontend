@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Qafila — Shift Report</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
 
@@ -15,9 +15,15 @@
       <span class="app-brand">Qafila</span>
       <span class="app-page-title">Shift Report</span>
     </div>
+    <nav class="app-nav">
+      <a href="../index.html" class="app-nav-link">Dashboard</a>
+      <a href="drivers.html" class="app-nav-link">Drivers</a>
+      <a href="vehicles.html" class="app-nav-link">Vehicles</a>
+      <a href="shifts.html" class="app-nav-link">Shifts</a>
+    </nav>
     <div class="app-topbar-right">
       <span class="app-manager" id="manager-name">—</span>
-      <a href="index.html" class="btn" style="text-decoration:none;">Back</a>
+      <a href="../index.html" class="btn" style="text-decoration:none;">Back</a>
       <button class="btn" id="logout-btn">Log out</button>
     </div>
   </header>
@@ -72,7 +78,7 @@
   </main>
 
   <script src="https://qafila-backend.onrender.com/socket.io/socket.io.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/shift.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/shift.js"></script>
 </body>
 </html>

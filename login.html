@@ -23,7 +23,7 @@
     </div>
   </aside>
 
-  <!-- RIGHT: auth forms -->
+  <!-- RIGHT: auth card -->
   <main class="auth-side">
     <div class="auth-side-inner">
 
@@ -32,11 +32,20 @@
         <div class="auth-header-sub">Manager access</div>
       </div>
 
-      <div class="auth-grid" id="auth-grid">
+      <div class="auth-card">
 
-        <!-- Sign in -->
-        <div class="auth-card">
-          <h2>Sign in</h2>
+        <!-- Tabs -->
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="auth-tab active" id="tab-signin" role="tab">
+            Sign in
+          </button>
+          <button type="button" class="auth-tab" id="tab-register" role="tab">
+            Create account
+          </button>
+        </div>
+
+        <!-- Sign in form -->
+        <div class="auth-panel" id="panel-signin">
           <p class="auth-sub">Access your manager dashboard</p>
 
           <form id="login-form" autocomplete="on">
@@ -49,12 +58,16 @@
             <button type="submit" id="login-btn">Sign in</button>
 
             <p id="login-error" class="auth-error" hidden></p>
+
+            <p class="auth-switch">
+              No account yet?
+              <a href="#" id="switch-to-register">Create one</a>
+            </p>
           </form>
         </div>
 
-        <!-- Register (only when no manager exists yet) -->
-        <div class="auth-card" id="register-card">
-          <h2>Create account</h2>
+        <!-- Register form -->
+        <div class="auth-panel" id="panel-register" hidden>
           <p class="auth-sub">Set up the first manager account</p>
 
           <form id="register-form" autocomplete="on">
@@ -74,7 +87,24 @@
 
             <p id="register-error" class="auth-error" hidden></p>
             <p id="register-success" class="auth-success" hidden></p>
+
+            <p class="auth-switch">
+              Already have an account?
+              <a href="#" id="switch-to-signin">Sign in</a>
+            </p>
           </form>
+        </div>
+
+        <!-- Locked register notice (shown when a manager already exists) -->
+        <div class="auth-panel" id="panel-locked" hidden>
+          <p class="auth-sub">Registration closed</p>
+          <p class="auth-note">
+            A manager account already exists for this fleet.<br />
+            Sign in to access the dashboard.
+          </p>
+          <button type="button" class="auth-back" id="back-to-signin">
+            Back to sign in
+          </button>
         </div>
 
       </div>

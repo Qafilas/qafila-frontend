@@ -3,23 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qafila — Sign in</title>
+  <title>Qafila — Fleet Management</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
-  <div class="top-strip ok"></div>
+<body class="auth-body">
 
-  <div class="auth-wrap">
-    <div style="width:100%; max-width:800px;">
-      <div class="auth-brand">
-        <h1>Qafila</h1>
-        <p>Fleet Management System</p>
+  <!-- LEFT: brand panel -->
+  <aside class="auth-hero">
+    <div class="auth-hero-overlay"></div>
+    <div class="auth-hero-content">
+      <div class="auth-hero-brand">QAFILA</div>
+      <div class="auth-hero-tag">Fleet intelligence for real roads.</div>
+      <div class="auth-hero-sub">
+        Live vehicle health, driver behaviour, and predictive maintenance — all in one console.
+      </div>
+    </div>
+    <div class="auth-hero-foot">
+      Qafila · Fleet Management System
+    </div>
+  </aside>
+
+  <!-- RIGHT: auth forms -->
+  <main class="auth-side">
+    <div class="auth-side-inner">
+
+      <div class="auth-header">
+        <div class="auth-header-brand">QAFILA</div>
+        <div class="auth-header-sub">Manager access</div>
       </div>
 
-      <!-- Sign in + Register side by side (register hides after first manager) -->
       <div class="auth-grid" id="auth-grid">
 
-        <!-- SIGN IN -->
+        <!-- Sign in -->
         <div class="auth-card">
           <h2>Sign in</h2>
           <p class="auth-sub">Access your manager dashboard</p>
@@ -37,7 +52,7 @@
           </form>
         </div>
 
-        <!-- REGISTER (only shown if no manager exists) -->
+        <!-- Register (only when no manager exists yet) -->
         <div class="auth-card" id="register-card">
           <h2>Create account</h2>
           <p class="auth-sub">Set up the first manager account</p>
@@ -63,8 +78,9 @@
         </div>
 
       </div>
+
     </div>
-  </div>
+  </main>
 
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>

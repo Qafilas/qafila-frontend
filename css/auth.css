@@ -94,7 +94,7 @@
 
 .auth-side-inner { width: 100%; max-width: 440px; }
 
-.auth-header { text-align: center; margin-bottom: 28px; }
+.auth-header { text-align: center; margin-bottom: 18px; }
 .auth-header-brand {
   font-size: 14px;
   font-weight: 700;
@@ -200,7 +200,7 @@
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .auth-tab {

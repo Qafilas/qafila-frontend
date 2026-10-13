@@ -504,3 +504,64 @@
 .icon-btn.delete:hover  { border-color: var(--crit); color: var(--crit); background: var(--crit-soft); }
 .icon-btn.deactivate:hover { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
 .icon-btn.activate:hover { border-color: var(--ok);   color: var(--ok);   background: var(--ok-soft); }
+
+/* ============================================================
+   Recent reports rows (dashboard)
+   ============================================================ */
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.report-row:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-3);
+}
+
+.report-row-left { min-width: 0; flex: 1; }
+
+.report-row-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.report-row-sub {
+  font-size: 11.5px;
+  color: var(--text-3);
+}
+
+.report-row-right { flex-shrink: 0; }
+
+.report-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.report-score.muted {
+  background: var(--surface-3);
+  color: var(--text-3);
+}

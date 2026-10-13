@@ -1,10 +1,13 @@
 /* ============================================================================
    QAFILA — Layout
-   Shell, sidebar, top bar, hero bar, page layouts, panels, metric cards, footer
+   Shell, sidebar, top bar, page layouts, panels, metric cards, dashboard grid
    ========================================================================= */
 
 
-/* ---------- App shell (sidebar + main) ---------- */
+/* ============================================================================
+   APP SHELL
+   ========================================================================= */
+
 .app-body { display: block; }
 
 .app-shell {
@@ -18,7 +21,10 @@
 }
 
 
-/* ---------- Sidebar ---------- */
+/* ============================================================================
+   SIDEBAR
+   ========================================================================= */
+
 .sidebar {
   background: #0a1020;
   border-right: 1px solid var(--border);
@@ -177,7 +183,10 @@
 }
 
 
-/* ---------- Main area ---------- */
+/* ============================================================================
+   MAIN AREA + TOP BAR
+   ========================================================================= */
+
 .main-area {
   display: flex;
   flex-direction: column;
@@ -244,16 +253,81 @@
 }
 
 
-/* ---------- Metric row ---------- */
-.metric-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  padding: 24px 32px 8px;
+/* ============================================================================
+   DASHBOARD GRID — two aligned rows
+   ========================================================================= */
+
+.dash-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 32px;
+  align-items: stretch;
 }
 
-@media (max-width: 1100px) { .metric-row { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px)  { .metric-row { grid-template-columns: 1fr; padding: 20px 20px 8px; } }
+@media (max-width: 1100px) {
+  .dash-grid { padding: 20px; }
+}
+
+.dash-top,
+.dash-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+  .dash-top,
+  .dash-bottom { grid-template-columns: 1fr; }
+}
+
+/* Stretch panels inside their row */
+.dash-top .dash-panel,
+.dash-bottom .dash-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-top .dash-panel .dash-panel-body {
+  flex: 1;
+  max-height: none;
+}
+
+.dash-bottom .dash-panel {
+  min-height: 320px;
+}
+
+.dash-bottom .dash-panel .dash-panel-body {
+  flex: 1;
+  max-height: 420px;
+}
+
+
+/* ============================================================================
+   METRICS — 3 on top, 2 below
+   ========================================================================= */
+
+.dash-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+.dash-metrics .metric-card:nth-child(1) { grid-column: span 2; }
+.dash-metrics .metric-card:nth-child(2) { grid-column: span 2; }
+.dash-metrics .metric-card:nth-child(3) { grid-column: span 2; }
+.dash-metrics .metric-card:nth-child(4) { grid-column: span 3; }
+.dash-metrics .metric-card:nth-child(5) { grid-column: span 3; }
+
+@media (max-width: 700px) {
+  .dash-metrics { grid-template-columns: repeat(2, 1fr); }
+  .dash-metrics .metric-card:nth-child(1),
+  .dash-metrics .metric-card:nth-child(2),
+  .dash-metrics .metric-card:nth-child(3),
+  .dash-metrics .metric-card:nth-child(4),
+  .dash-metrics .metric-card:nth-child(5) { grid-column: span 1; }
+}
 
 .metric-card {
   background: var(--surface);
@@ -261,6 +335,12 @@
   border-radius: var(--radius);
   padding: 18px 20px;
   transition: border-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 88px;
 }
 
 .metric-card:hover { border-color: var(--border-strong); }
@@ -281,7 +361,6 @@
   letter-spacing: -0.03em;
   font-family: var(--mono);
   line-height: 1;
-  margin-bottom: 8px;
 }
 
 .metric-value.ok     { color: var(--ok); }
@@ -289,84 +368,60 @@
 .metric-value.crit   { color: var(--crit); }
 .metric-value.accent { color: var(--accent); }
 
-.metric-sub {
-  font-size: 12px;
-  color: var(--text-3);
-  line-height: 1.4;
-}
 
+/* ============================================================================
+   DASH PANELS
+   ========================================================================= */
 
-/* ---------- Main sections ---------- */
-.main-section {
-  padding: 24px 32px 0;
-}
-
-@media (max-width: 600px) { .main-section { padding: 20px 20px 0; } }
-
-.section-head {
+.dash-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dash-panel .panel-head {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
 }
 
-.section-title {
-  font-size: 12px;
+.dash-panel .panel-title {
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--text-3);
   font-weight: 600;
 }
 
-.section-count {
+.dash-panel .panel-count {
   font-size: 12px;
   color: var(--text-3);
   font-family: var(--mono);
 }
 
-.section-link {
+.dash-panel .section-link {
   font-size: 12px;
   color: var(--accent);
 }
+.dash-panel .section-link:hover { color: var(--accent-hover); }
 
-.section-link:hover { color: var(--accent-hover); }
-
-
-/* ---------- Attention strip ---------- */
-.attention-strip {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-@media (max-width: 900px) { .attention-strip { grid-template-columns: 1fr; } }
-
-.attention-column {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-}
-
-.attention-label {
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--text-3);
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.attention-list {
+.dash-panel-body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 260px;
   overflow-y: auto;
 }
 
 
-/* ---------- Panels (kept for other pages) ---------- */
+/* ============================================================================
+   GENERIC PANEL (used by drivers, vehicles, shift pages)
+   ========================================================================= */
+
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -398,7 +453,10 @@
 .empty-soft-sub { font-size: 12px; color: var(--text-3); line-height: 1.5; }
 
 
-/* ---------- Page layouts (kept for other pages) ---------- */
+/* ============================================================================
+   GENERIC PAGE LAYOUTS
+   ========================================================================= */
+
 .app-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -411,8 +469,43 @@
 .page-single { grid-template-columns: 1fr 2fr; gap: 20px; }
 @media (max-width: 1000px) { .page-single { grid-template-columns: 1fr; } }
 
+.main-section {
+  padding: 24px 32px 0;
+}
+@media (max-width: 600px) { .main-section { padding: 20px 20px 0; } }
 
-/* ---------- Legacy top bar (used by pages other than dashboard) ---------- */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.section-count {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+.section-link {
+  font-size: 12px;
+  color: var(--accent);
+}
+.section-link:hover { color: var(--accent-hover); }
+
+
+/* ============================================================================
+   LEGACY TOP BAR (kept for compatibility with any page that still uses it)
+   ========================================================================= */
+
 .app-topbar {
   display: flex;
   align-items: center;
@@ -451,49 +544,9 @@
 @media (max-width: 900px) { .app-nav { display: none; } }
 
 
-/* ---------- Hero bar (kept for compatibility) ---------- */
-.hero-bar {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 32px;
-  padding: 22px 32px;
-  background: linear-gradient(90deg, rgba(17, 26, 46, 0.85) 0%, rgba(11, 18, 32, 0.6) 100%);
-  border-bottom: 1px solid var(--border);
-}
-
-@media (max-width: 900px) {
-  .hero-bar { grid-template-columns: 1fr; gap: 16px; padding: 20px 24px; text-align: center; }
-}
-
-.hero-clock { display: flex; flex-direction: column; line-height: 1.1; }
-
-.hero-clock-time {
-  font-size: 26px;
-  font-weight: 600;
-  color: var(--text);
-  font-family: var(--mono);
-  letter-spacing: -0.02em;
-}
-
-.hero-clock-date {
-  font-size: 11.5px;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-top: 4px;
-}
-
-.hero-summary { min-width: 0; }
-.hero-headline {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
-}
-.hero-sub { font-size: 13px; color: var(--text-2); }
-.hero-status { flex-shrink: 0; }
+/* ============================================================================
+   HERO PILL
+   ========================================================================= */
 
 .hero-pill {
   display: inline-flex;
@@ -518,25 +571,3 @@
   0%, 100% { opacity: 1;   transform: scale(1); }
   50%      { opacity: 0.5; transform: scale(1.25); }
 }
-
-
-/* ---------- Footer ---------- */
-.app-footer {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  padding: 16px 32px;
-  margin-top: 24px;
-  border-top: 1px solid var(--border);
-  background: rgba(11, 18, 32, 0.6);
-  font-size: 12px;
-  color: var(--text-3);
-}
-
-.footer-item { display: flex; align-items: baseline; gap: 8px; }
-.footer-label { text-transform: uppercase; letter-spacing: 0.14em; font-size: 10px; }
-.footer-value { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 13px; }
-.footer-spacer { flex: 1; }
-.footer-value.ok   { color: var(--ok); }
-.footer-value.warn { color: var(--warn); }
-.footer-value.crit { color: var(--crit); }

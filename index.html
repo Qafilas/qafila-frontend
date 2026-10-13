@@ -44,6 +44,10 @@
           <span class="sidebar-link-mark"></span>
           <span>Shifts</span>
         </a>
+        <a href="pages/reports.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Reports</span>
+        </a>
 
         <div class="sidebar-section-label">Insights</div>
         <a href="pages/predictions.html" class="sidebar-link">
@@ -79,7 +83,6 @@
          ============================================================ -->
     <main class="main-area">
 
-      <!-- Top bar -->
       <header class="main-topbar">
         <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
           <span></span><span></span><span></span>
@@ -94,106 +97,96 @@
           <div class="main-clock" id="hero-time">--:--:--</div>
           <span class="hero-pill ok" id="hero-pill">
             <span class="hero-pill-dot"></span>
-            <span class="hero-pill-text" id="hero-pill-text">Initialising</span>
+            <span class="hero-pill-text" id="hero-pill-text">All systems normal</span>
           </span>
         </div>
       </header>
 
-      <!-- Metric row -->
-      <section class="metric-row">
+      <!-- ============================================================
+           DASHBOARD GRID
+           ============================================================ -->
+      <section class="dash-grid">
 
-        <div class="metric-card">
-          <div class="metric-label">Active shifts</div>
-          <div class="metric-value" id="metric-shifts">0</div>
-          <div class="metric-sub">Vehicles currently on route</div>
-        </div>
+        <!-- ============ TOP ROW ============ -->
+        <div class="dash-top">
 
-        <div class="metric-card">
-          <div class="metric-label">Critical</div>
-          <div class="metric-value crit" id="metric-crit">0</div>
-          <div class="metric-sub">Vehicles with red alerts</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-label">Warning</div>
-          <div class="metric-value warn" id="metric-warn">0</div>
-          <div class="metric-sub">Vehicles with amber alerts</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-label">Predictions</div>
-          <div class="metric-value accent" id="metric-pred">0</div>
-          <div class="metric-sub">Open maintenance forecasts</div>
-        </div>
-
-      </section>
-
-      <!-- Vehicles -->
-      <section class="main-section">
-        <div class="section-head">
-          <div class="section-title">Vehicles on shift</div>
-          <div class="section-count" id="vehicle-count">0</div>
-        </div>
-
-        <div id="vehicle-grid" class="vehicle-grid">
-          <div class="empty-soft">
-            <div class="empty-soft-title">No active shifts</div>
-            <div class="empty-soft-sub">Vehicles will appear here once a driver taps their card.</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Quick attention strip -->
-      <section class="main-section">
-        <div class="section-head">
-          <div class="section-title">Attention</div>
-          <a href="pages/predictions.html" class="section-link">View all</a>
-        </div>
-
-        <div class="attention-strip">
-          <div class="attention-column">
-            <div class="attention-label">Live alerts</div>
-            <div class="attention-list" id="alerts-mini">
-              <div class="empty-soft">
-                <div class="empty-soft-title">No active alerts</div>
-                <div class="empty-soft-sub">Live alerts will appear here.</div>
-              </div>
+          <!-- Metrics -->
+          <div class="dash-metrics">
+            <div class="metric-card">
+              <div class="metric-label">Shifts</div>
+              <div class="metric-value" id="metric-shifts">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Drivers</div>
+              <div class="metric-value" id="metric-drivers">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Vehicles</div>
+              <div class="metric-value" id="metric-vehicles">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Critical</div>
+              <div class="metric-value crit" id="metric-crit">0</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Warning</div>
+              <div class="metric-value warn" id="metric-warn">0</div>
             </div>
           </div>
 
-          <div class="attention-column">
-            <div class="attention-label">Predictions</div>
-            <div class="attention-list" id="predictions-mini">
+          <!-- Maintenance predictions -->
+          <div class="dash-panel">
+            <div class="panel-head">
+              <div class="panel-title">Maintenance predictions</div>
+              <div class="panel-count" id="predictions-count">0</div>
+            </div>
+
+            <div id="predictions-list" class="prediction-list dash-panel-body">
               <div class="empty-soft">
                 <div class="empty-soft-title">No predictions</div>
                 <div class="empty-soft-sub">The weekly job populates this.</div>
               </div>
             </div>
           </div>
+
         </div>
+
+        <!-- ============ BOTTOM ROW ============ -->
+        <div class="dash-bottom">
+
+          <!-- Emergency alerts -->
+          <div class="dash-panel">
+            <div class="panel-head">
+              <div class="panel-title">Emergency alerts</div>
+              <div class="panel-count" id="alerts-count">0</div>
+            </div>
+
+            <div id="alerts-list" class="alert-list dash-panel-body">
+              <div class="empty-soft">
+                <div class="empty-soft-title">All clear</div>
+                <div class="empty-soft-sub">No active alerts across the fleet.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent reports -->
+          <div class="dash-panel">
+            <div class="panel-head">
+              <div class="panel-title">Recent reports</div>
+              <a href="pages/reports.html" class="section-link">View all</a>
+            </div>
+
+            <div id="reports-list" class="report-list dash-panel-body">
+              <div class="empty-soft">
+                <div class="empty-soft-title">No reports yet</div>
+                <div class="empty-soft-sub">Completed shifts will appear here.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </section>
-
-      <!-- Footer summary -->
-      <footer class="app-footer">
-        <div class="footer-item">
-          <span class="footer-label">Vehicles</span>
-          <span class="footer-value" id="foot-vehicles">0</span>
-        </div>
-        <div class="footer-item">
-          <span class="footer-label">Drivers</span>
-          <span class="footer-value" id="foot-drivers">0</span>
-        </div>
-        <div class="footer-item">
-          <span class="footer-label">Shifts this week</span>
-          <span class="footer-value" id="foot-shifts">0</span>
-        </div>
-        <div class="footer-spacer"></div>
-        <div class="footer-item">
-          <span class="footer-label">Connection</span>
-          <span class="footer-value" id="foot-connection">Disconnected</span>
-        </div>
-      </footer>
-
     </main>
   </div>
 

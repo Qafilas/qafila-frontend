@@ -75,7 +75,9 @@
 
     const name     = document.getElementById('d-name').value.trim();
     const employee = document.getElementById('d-employee').value.trim();
-    const phone    = document.getElementById('d-phone').value.trim();
+    const phoneCode = document.getElementById('d-phone-code').value;
+    const phoneNum  = document.getElementById('d-phone').value.trim().replace(/\s+/g, '');
+    const phone     = phoneNum ? (phoneCode + phoneNum) : '';
     const license  = document.getElementById('d-license').value.trim();
 
     try {

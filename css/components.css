@@ -275,6 +275,27 @@
 .form-row input:hover { border-color: var(--border-strong); }
 .form-row input:focus { border-color: var(--accent); background: var(--surface-3); }
 .form-hint { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+.phone-field {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 8px;
+}
+
+.phone-field select {
+  padding: 10px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  outline: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.phone-field select:hover { border-color: var(--border-strong); }
+.phone-field select:focus { border-color: var(--accent); }
+
+.phone-field input { width: 100%; }
 .form-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
 .form-actions .btn-primary { padding: 11px 16px; font-size: 13px; }
 

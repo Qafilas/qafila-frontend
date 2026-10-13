@@ -4,95 +4,158 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Qafila — Drivers</title>
-
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/layout.css" />
   <link rel="stylesheet" href="../css/components.css" />
 </head>
-<body>
+<body class="app-body">
 
-  <div class="top-strip ok"></div>
+  <div class="top-strip ok" id="top-strip"></div>
 
-  <header class="app-topbar">
-    <div class="app-topbar-left">
-      <span class="brand-mark" aria-hidden="true">
-        <span></span><span></span><span></span>
-      </span>
-      <span class="app-brand">Qafila</span>
-      <span class="app-page-title">Drivers</span>
-    </div>
+  <div class="app-shell">
 
-    <nav class="app-nav">
-      <a href="../index.html" class="app-nav-link">Dashboard</a>
-      <a href="drivers.html" class="app-nav-link active">Drivers</a>
-      <a href="vehicles.html" class="app-nav-link">Vehicles</a>
-      <a href="shifts.html" class="app-nav-link">Shifts</a>
-    </nav>
+    <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
+    <aside class="sidebar" id="sidebar">
 
-    <div class="app-topbar-right">
-      <span class="app-manager" id="manager-name">—</span>
-      <button class="btn" id="logout-btn">Log out</button>
-    </div>
-  </header>
-
-  <main class="app-layout page-single">
-
-    <!-- Add driver -->
-    <section class="panel">
-      <div class="panel-head">
-        <div class="panel-title">Add driver</div>
+      <div class="sidebar-brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="sidebar-brand-text">Qafila</span>
       </div>
 
-      <form id="driver-form" class="form-grid">
-        <div class="form-row">
-          <label for="d-name">Full name</label>
-          <input type="text" id="d-name" required />
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">Fleet</div>
+        <a href="../index.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Dashboard</span>
+        </a>
+        <a href="drivers.html" class="sidebar-link active">
+          <span class="sidebar-link-mark"></span>
+          <span>Drivers</span>
+        </a>
+        <a href="vehicles.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Vehicles</span>
+        </a>
+        <a href="shifts.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Shifts</span>
+        </a>
+
+        <div class="sidebar-section-label">Insights</div>
+        <a href="predictions.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Predictions</span>
+        </a>
+
+        <div class="sidebar-section-label">System</div>
+        <a href="settings.html" class="sidebar-link">
+          <span class="sidebar-link-mark"></span>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="sidebar-live">
+          <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
+          <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
         </div>
 
-        <div class="form-row">
-          <label for="d-employee">Employee ID</label>
-          <input type="text" id="d-employee" required placeholder="EMP-0142" />
+        <div class="sidebar-user">
+          <div class="sidebar-user-name" id="manager-name">—</div>
+          <div class="sidebar-user-role">Manager</div>
         </div>
 
-        <div class="form-row">
-          <label for="d-phone">Phone</label>
-          <input type="text" id="d-phone" placeholder="+974..." />
-        </div>
-
-        <div class="form-row">
-          <label for="d-license">License</label>
-          <input type="text" id="d-license" placeholder="QA-XXXXXX" />
-        </div>
-
-        <div class="form-row">
-          <label for="d-uid">RFID / NFC card UID (optional)</label>
-          <input type="text" id="d-uid" placeholder="e.g. 04A1B2C3D4" />
-          <div class="form-hint">Leave empty if the card is not yet issued.</div>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" id="driver-submit">Add driver</button>
-          <p id="driver-error" class="auth-error" hidden></p>
-          <p id="driver-success" class="auth-success" hidden></p>
-        </div>
-      </form>
-    </section>
-
-    <!-- Drivers list -->
-    <section class="panel">
-      <div class="panel-head">
-        <div class="panel-title">All drivers</div>
-        <div class="panel-count" id="driver-count">0</div>
+        <button class="sidebar-logout" id="logout-btn">Log out</button>
       </div>
 
-      <div id="driver-list" class="data-list">
-        <p class="empty">Loading…</p>
-      </div>
-    </section>
+    </aside>
 
-  </main>
+    <!-- ============================================================
+         MAIN AREA
+         ============================================================ -->
+    <main class="main-area">
+
+      <header class="main-topbar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="main-topbar-title">
+          <div class="main-topbar-page">Drivers</div>
+          <div class="main-topbar-date" id="hero-date">—</div>
+        </div>
+
+        <div class="main-topbar-right">
+          <div class="main-clock" id="hero-time">--:--:--</div>
+          <span class="hero-pill ok" id="hero-pill">
+            <span class="hero-pill-dot"></span>
+            <span class="hero-pill-text" id="hero-pill-text">Ready</span>
+          </span>
+        </div>
+      </header>
+
+      <section class="main-section" style="padding-top: 24px;">
+        <div class="app-layout page-single" style="padding: 0;">
+
+          <!-- Add driver -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Add driver</div>
+            </div>
+
+            <form id="driver-form" class="form-grid">
+              <div class="form-row">
+                <label for="d-name">Full name</label>
+                <input type="text" id="d-name" required />
+              </div>
+
+              <div class="form-row">
+                <label for="d-employee">Employee ID</label>
+                <input type="text" id="d-employee" required placeholder="EMP-0142" />
+              </div>
+
+              <div class="form-row">
+                <label for="d-phone">Phone</label>
+                <input type="text" id="d-phone" placeholder="+974..." />
+              </div>
+
+              <div class="form-row">
+                <label for="d-license">License</label>
+                <input type="text" id="d-license" placeholder="QA-XXXXXX" />
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="driver-submit">Add driver</button>
+                <p id="driver-error" class="auth-error" hidden></p>
+                <p id="driver-success" class="auth-success" hidden></p>
+              </div>
+            </form>
+          </div>
+
+          <!-- Drivers list -->
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">All drivers</div>
+              <div class="panel-count" id="driver-count">0</div>
+            </div>
+
+            <div id="driver-list" class="data-list">
+              <p class="empty">Loading…</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
 
   <script src="../js/api.js"></script>
+  <script src="../js/shell.js"></script>
   <script src="../js/drivers.js"></script>
 </body>
 </html>

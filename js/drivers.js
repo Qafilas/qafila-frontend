@@ -6,9 +6,6 @@
     return;
   }
 
-  const managerNameEl = document.getElementById('manager-name');
-  const logoutBtn     = document.getElementById('logout-btn');
-
   const driverForm    = document.getElementById('driver-form');
   const driverSubmit  = document.getElementById('driver-submit');
   const driverErr     = document.getElementById('driver-error');
@@ -24,25 +21,6 @@
     return e;
   }
 
-  function decodeToken() {
-    try {
-      const t = getToken();
-      if (!t) return null;
-      return JSON.parse(atob(t.split('.')[1]));
-    } catch (_) { return null; }
-  }
-
-  function setupManager() {
-    const payload = decodeToken();
-    managerNameEl.textContent = payload && payload.name ? payload.name : '—';
-  }
-
-  logoutBtn.addEventListener('click', () => {
-    clearToken();
-    location.href = '../login.html';
-  });
-
-  /* ---------- Load drivers ---------- */
   async function loadDrivers() {
     try {
       const data = await apiFetch('/api/drivers');
@@ -66,9 +44,6 @@
         const sub1 = [d.employee_id, d.phone || 'no phone', d.license || 'no license'];
         left.appendChild(el('div', 'data-item-sub', sub1.join(' · ')));
 
-        left.appendChild(el('div', 'data-item-sub',
-          d.card_uid ? `Card: ${d.card_uid}` : 'No card assigned'));
-
         const right = el('div', 'data-item-right');
 
         right.appendChild(el('span',
@@ -76,10 +51,6 @@
           d.active ? 'Active' : 'Inactive'));
 
         if (d.active) {
-          const uidBtn = el('button', 'btn', d.card_uid ? 'Change card' : 'Assign card');
-          uidBtn.addEventListener('click', () => assignCard(d));
-          right.appendChild(uidBtn);
-
           const deactBtn = el('button', 'btn btn-danger', 'Deactivate');
           deactBtn.addEventListener('click', () => deactivateDriver(d));
           right.appendChild(deactBtn);
@@ -95,7 +66,6 @@
     }
   }
 
-  /* ---------- Add driver ---------- */
   driverForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     driverErr.hidden = true;
@@ -107,20 +77,12 @@
     const employee = document.getElementById('d-employee').value.trim();
     const phone    = document.getElementById('d-phone').value.trim();
     const license  = document.getElementById('d-license').value.trim();
-    const uid      = document.getElementById('d-uid').value.trim();
 
     try {
-      const res = await apiFetch('/api/drivers', {
+      await apiFetch('/api/drivers', {
         method: 'POST',
         body: JSON.stringify({ name, employee_id: employee, phone, license })
       });
-
-      if (uid && res.driverId) {
-        await apiFetch(`/api/drivers/${res.driverId}/card`, {
-          method: 'POST',
-          body: JSON.stringify({ uid })
-        });
-      }
 
       driverOk.textContent = 'Driver added.';
       driverOk.hidden = false;
@@ -136,26 +98,8 @@
     driverSubmit.textContent = 'Add driver';
   });
 
-  /* ---------- Assign card ---------- */
-  async function assignCard(driver) {
-    const uid = prompt(`Enter RFID card UID for ${driver.name}:`, driver.card_uid || '');
-    if (!uid) return;
-
-    try {
-      await apiFetch(`/api/drivers/${driver.id}/card`, {
-        method: 'POST',
-        body: JSON.stringify({ uid: uid.trim() })
-      });
-      loadDrivers();
-    } catch (err) {
-      alert('Failed to assign card: ' + err.message);
-    }
-  }
-
-  /* ---------- Deactivate ---------- */
   async function deactivateDriver(driver) {
-    if (!confirm(`Deactivate ${driver.name}? Their card will be disabled too.`)) return;
-
+    if (!confirm(`Deactivate ${driver.name}?`)) return;
     try {
       await apiFetch(`/api/drivers/${driver.id}`, { method: 'DELETE' });
       loadDrivers();
@@ -164,7 +108,5 @@
     }
   }
 
-  /* ---------- Boot ---------- */
-  setupManager();
   loadDrivers();
 })();

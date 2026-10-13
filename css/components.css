@@ -282,14 +282,26 @@
 }
 
 .phone-field select {
-  padding: 10px 10px;
-  background: var(--surface-2);
+  /* hide native arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* leave room on the right for our custom arrow */
+  padding: 10px 34px 10px 12px;
+
+  background-color: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
   outline: none;
   font-size: 13px;
   cursor: pointer;
+
+  /* draw our own arrow, positioned 12px from the right edge */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%238b9bb4' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
 }
 
 .phone-field select:hover { border-color: var(--border-strong); }

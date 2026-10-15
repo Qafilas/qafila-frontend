@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qafila — Settings</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+</head>
+<body class="app-body">
+
+  <div class="top-strip ok" id="top-strip"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-mark" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </span>
+    <span class="sidebar-brand-text">Qafila</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Fleet</div>
+    <a href="index.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Dashboard</span>
+    </a>
+    <a href="operations.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Operations</span>
+    </a>
+    <a href="drivers.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Drivers</span>
+    </a>
+    <a href="vehicles.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Vehicles</span>
+    </a>
+    <a href="shifts.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Shifts</span>
+    </a>
+
+    <div class="sidebar-section-label">Insights</div>
+    <a href="predictions.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Predictions</span>
+    </a>
+
+    <div class="sidebar-section-label">System</div>
+    <a href="import.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Import</span>
+    </a>
+    <a href="settings.html" class="sidebar-link active">
+      <span class="sidebar-link-mark"></span><span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-foot">
+    <div class="sidebar-live">
+      <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
+      <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="manager-name">—</div>
+      <div class="sidebar-user-role">Manager</div>
+    </div>
+    <button class="sidebar-logout" id="logout-btn">Log out</button>
+  </div>
+</aside>
+
+    <main class="main-area">
+
+      <header class="main-topbar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="main-topbar-title">
+          <div class="main-topbar-page">Settings</div>
+          <div class="main-topbar-date" id="hero-date">—</div>
+        </div>
+
+        <div class="main-topbar-right">
+          <div class="main-clock" id="hero-time">--:--:--</div>
+          <span class="hero-pill ok" id="hero-pill">
+            <span class="hero-pill-dot"></span>
+            <span class="hero-pill-text" id="hero-pill-text">Ready</span>
+          </span>
+        </div>
+      </header>
+
+      <section class="settings-wrap">
+
+        <!-- Manager profile -->
+        <div class="dash-panel">
+          <div class="panel-head">
+            <div class="panel-title">Manager profile</div>
+          </div>
+
+          <form id="profile-form" class="form-grid">
+            <div class="form-row">
+              <label for="p-name">Name</label>
+              <input type="text" id="p-name" />
+            </div>
+
+            <div class="form-row">
+              <label for="p-email">Email</label>
+              <input type="email" id="p-email" disabled />
+              <div class="form-hint">Email cannot be changed.</div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="profile-submit">Save changes</button>
+              <p id="profile-error" class="auth-error" hidden></p>
+              <p id="profile-success" class="auth-success" hidden></p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Change password -->
+        <div class="dash-panel">
+          <div class="panel-head">
+            <div class="panel-title">Change password</div>
+          </div>
+
+          <form id="password-form" class="form-grid">
+            <div class="form-row">
+              <label for="pw-current">Current password</label>
+              <input type="password" id="pw-current" required autocomplete="current-password" />
+            </div>
+
+            <div class="form-row">
+              <label for="pw-new">New password</label>
+              <input type="password" id="pw-new" required minlength="8" autocomplete="new-password" />
+            </div>
+
+            <div class="form-row">
+              <label for="pw-confirm">Confirm new password</label>
+              <input type="password" id="pw-confirm" required minlength="8" autocomplete="new-password" />
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="password-submit">Update password</button>
+              <p id="password-error" class="auth-error" hidden></p>
+              <p id="password-success" class="auth-success" hidden></p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Nodes -->
+        <div class="dash-panel">
+          <div class="panel-head">
+            <div class="panel-title">Nodes</div>
+            <div class="panel-count" id="nodes-count">0</div>
+          </div>
+
+          <div id="nodes-list" class="data-list">
+            <p class="empty">Loading…</p>
+          </div>
+        </div>
+
+        <!-- Thresholds -->
+        <div class="dash-panel">
+          <div class="panel-head">
+            <div class="panel-title">Alert thresholds</div>
+            <div class="panel-count">read-only</div>
+          </div>
+
+          <div class="kv-list" id="thresholds-list">
+            <div class="kv-row">
+              <span class="k">Coolant warning</span>
+              <span class="v">90 °C</span>
+            </div>
+            <div class="kv-row">
+              <span class="k">Coolant critical</span>
+              <span class="v">105 °C</span>
+            </div>
+            <div class="kv-row">
+              <span class="k">Voltage warning</span>
+              <span class="v">13.5 V</span>
+            </div>
+            <div class="kv-row">
+              <span class="k">Voltage critical</span>
+              <span class="v">12.5 V</span>
+            </div>
+            <div class="kv-row">
+              <span class="k">STFT drift limit</span>
+              <span class="v">± 15 %</span>
+            </div>
+            <div class="kv-row">
+              <span class="k">LTFT drift limit</span>
+              <span class="v">± 15 %</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/shell.js"></script>
+  <script src="../js/settings.js"></script>
+</body>
+</html>

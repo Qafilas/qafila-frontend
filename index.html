@@ -14,73 +14,59 @@
 
   <div class="app-shell">
 
-    <!-- ============================================================
-         SIDEBAR
-         ============================================================ -->
     <aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-mark" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </span>
+    <span class="sidebar-brand-text">Qafila</span>
+  </div>
 
-      <div class="sidebar-brand">
-        <span class="brand-mark" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-        <span class="sidebar-brand-text">Qafila</span>
-      </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Fleet</div>
+    <a href="pages/index.html" class="sidebar-link active">
+      <span class="sidebar-link-mark"></span><span>Dashboard</span>
+    </a>
+    <a href="pages/operations.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Operations</span>
+    </a>
+    <a href="pages/drivers.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Drivers</span>
+    </a>
+    <a href="pages/vehicles.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Vehicles</span>
+    </a>
+    <a href="pages/shifts.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Shifts</span>
+    </a>
 
-      <nav class="sidebar-nav">
-        <div class="sidebar-section-label">Fleet</div>
-        <a href="index.html" class="sidebar-link active">
-          <span class="sidebar-link-mark"></span>
-          <span>Dashboard</span>
-        </a>
-        <a href="pages/drivers.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Drivers</span>
-        </a>
-        <a href="pages/vehicles.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Vehicles</span>
-        </a>
-        <a href="pages/shifts.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Shifts</span>
-        </a>
-        <a href="pages/reports.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Reports</span>
-        </a>
+    <div class="sidebar-section-label">Insights</div>
+    <a href="pages/predictions.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Predictions</span>
+    </a>
 
-        <div class="sidebar-section-label">Insights</div>
-        <a href="pages/predictions.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Predictions</span>
-        </a>
+    <div class="sidebar-section-label">System</div>
+    <a href="pages/import.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Import</span>
+    </a>
+    <a href="pages/settings.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Settings</span>
+    </a>
+  </nav>
 
-        <div class="sidebar-section-label">System</div>
-        <a href="pages/settings.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Settings</span>
-        </a>
-      </nav>
+  <div class="sidebar-foot">
+    <div class="sidebar-live">
+      <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
+      <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="manager-name">—</div>
+      <div class="sidebar-user-role">Manager</div>
+    </div>
+    <button class="sidebar-logout" id="logout-btn">Log out</button>
+  </div>
+</aside>
 
-      <div class="sidebar-foot">
-        <div class="sidebar-live">
-          <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
-          <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
-        </div>
-
-        <div class="sidebar-user">
-          <div class="sidebar-user-name" id="manager-name">—</div>
-          <div class="sidebar-user-role">Manager</div>
-        </div>
-
-        <button class="sidebar-logout" id="logout-btn">Log out</button>
-      </div>
-
-    </aside>
-
-    <!-- ============================================================
-         MAIN AREA
-         ============================================================ -->
     <main class="main-area">
 
       <header class="main-topbar">
@@ -102,15 +88,9 @@
         </div>
       </header>
 
-      <!-- ============================================================
-           DASHBOARD GRID
-           ============================================================ -->
       <section class="dash-grid">
 
-        <!-- ============ TOP ROW ============ -->
         <div class="dash-top">
-
-          <!-- Metrics -->
           <div class="dash-metrics">
             <div class="metric-card">
               <div class="metric-label">Shifts</div>
@@ -134,59 +114,41 @@
             </div>
           </div>
 
-          <!-- Maintenance predictions -->
           <div class="dash-panel">
             <div class="panel-head">
               <div class="panel-title">Maintenance predictions</div>
               <div class="panel-count" id="predictions-count">0</div>
             </div>
-
             <div id="predictions-list" class="prediction-list dash-panel-body">
-              <div class="empty-soft">
-                <div class="empty-soft-title">No predictions</div>
-                <div class="empty-soft-sub">The weekly job populates this.</div>
-              </div>
+              <p class="empty">Loading…</p>
             </div>
           </div>
-
         </div>
 
-        <!-- ============ BOTTOM ROW ============ -->
         <div class="dash-bottom">
-
-          <!-- Emergency alerts -->
           <div class="dash-panel">
             <div class="panel-head">
               <div class="panel-title">Emergency alerts</div>
               <div class="panel-count" id="alerts-count">0</div>
             </div>
-
             <div id="alerts-list" class="alert-list dash-panel-body">
-              <div class="empty-soft">
-                <div class="empty-soft-title">All clear</div>
-                <div class="empty-soft-sub">No active alerts across the fleet.</div>
-              </div>
+              <p class="empty">Loading…</p>
             </div>
           </div>
 
-          <!-- Recent reports -->
           <div class="dash-panel">
             <div class="panel-head">
               <div class="panel-title">Recent reports</div>
-              <a href="pages/reports.html" class="section-link">View all</a>
+              <a href="pages/shifts.html" class="section-link">View all</a>
             </div>
-
             <div id="reports-list" class="report-list dash-panel-body">
-              <div class="empty-soft">
-                <div class="empty-soft-title">No reports yet</div>
-                <div class="empty-soft-sub">Completed shifts will appear here.</div>
-              </div>
+              <p class="empty">Loading…</p>
             </div>
           </div>
-
         </div>
 
       </section>
+
     </main>
   </div>
 
@@ -195,6 +157,7 @@
   <script src="https://qafila-backend.onrender.com/socket.io/socket.io.js"></script>
   <script src="js/api.js"></script>
   <script src="js/popup.js"></script>
+  <script src="js/shell.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>

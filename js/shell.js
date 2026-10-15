@@ -1,4 +1,4 @@
-/* Qafila shared shell — sidebar, clock, live status, logout */
+/* Qafila shared shell — sidebar toggle, clock, live status, logout */
 
 (function () {
   if (!getToken()) {
@@ -12,8 +12,30 @@
   const toggle  = document.getElementById('sidebar-toggle');
 
   if (sidebar && toggle) {
-    toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebar.classList.toggle('open');
+    });
   }
+
+  if (sidebar) {
+    sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+          sidebar.classList.remove('open');
+        }
+      });
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth > 900) return;
+    if (!sidebar) return;
+    if (!sidebar.classList.contains('open')) return;
+    if (sidebar.contains(e.target)) return;
+    if (toggle && toggle.contains(e.target)) return;
+    sidebar.classList.remove('open');
+  });
 
   /* ---------- Manager name + logout ---------- */
   const managerNameEl = document.getElementById('manager-name');
@@ -63,8 +85,8 @@
   }
 
   /* ---------- Socket + sidebar live dot ---------- */
-  const dot  = document.getElementById('sidebar-live-dot');
-  const text = document.getElementById('sidebar-live-text');
+  const dot   = document.getElementById('sidebar-live-dot');
+  const text  = document.getElementById('sidebar-live-text');
   const strip = document.getElementById('top-strip');
 
   if (typeof io !== 'undefined') {

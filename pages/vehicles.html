@@ -14,69 +14,59 @@
 
   <div class="app-shell">
 
-    <!-- ============================================================
-         SIDEBAR
-         ============================================================ -->
     <aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-mark" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </span>
+    <span class="sidebar-brand-text">Qafila</span>
+  </div>
 
-      <div class="sidebar-brand">
-        <span class="brand-mark" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-        <span class="sidebar-brand-text">Qafila</span>
-      </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Fleet</div>
+    <a href="index.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Dashboard</span>
+    </a>
+    <a href="operations.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Operations</span>
+    </a>
+    <a href="drivers.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Drivers</span>
+    </a>
+    <a href="vehicles.html" class="sidebar-link active">
+      <span class="sidebar-link-mark"></span><span>Vehicles</span>
+    </a>
+    <a href="shifts.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Shifts</span>
+    </a>
 
-      <nav class="sidebar-nav">
-        <div class="sidebar-section-label">Fleet</div>
-        <a href="../index.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Dashboard</span>
-        </a>
-        <a href="drivers.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Drivers</span>
-        </a>
-        <a href="vehicles.html" class="sidebar-link active">
-          <span class="sidebar-link-mark"></span>
-          <span>Vehicles</span>
-        </a>
-        <a href="shifts.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Shifts</span>
-        </a>
+    <div class="sidebar-section-label">Insights</div>
+    <a href="predictions.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Predictions</span>
+    </a>
 
-        <div class="sidebar-section-label">Insights</div>
-        <a href="predictions.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Predictions</span>
-        </a>
+    <div class="sidebar-section-label">System</div>
+    <a href="import.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Import</span>
+    </a>
+    <a href="settings.html" class="sidebar-link ">
+      <span class="sidebar-link-mark"></span><span>Settings</span>
+    </a>
+  </nav>
 
-        <div class="sidebar-section-label">System</div>
-        <a href="settings.html" class="sidebar-link">
-          <span class="sidebar-link-mark"></span>
-          <span>Settings</span>
-        </a>
-      </nav>
+  <div class="sidebar-foot">
+    <div class="sidebar-live">
+      <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
+      <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="manager-name">—</div>
+      <div class="sidebar-user-role">Manager</div>
+    </div>
+    <button class="sidebar-logout" id="logout-btn">Log out</button>
+  </div>
+</aside>
 
-      <div class="sidebar-foot">
-        <div class="sidebar-live">
-          <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
-          <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
-        </div>
-
-        <div class="sidebar-user">
-          <div class="sidebar-user-name" id="manager-name">—</div>
-          <div class="sidebar-user-role">Manager</div>
-        </div>
-
-        <button class="sidebar-logout" id="logout-btn">Log out</button>
-      </div>
-
-    </aside>
-
-    <!-- ============================================================
-         MAIN AREA
-         ============================================================ -->
     <main class="main-area">
 
       <header class="main-topbar">
@@ -98,10 +88,9 @@
         </div>
       </header>
 
-      <section class="main-section" style="padding-top: 24px;">
-        <div class="app-layout page-single" style="padding: 0;">
+      <section class="main-section" style="padding-top:24px;">
+        <div class="app-layout page-single" style="padding:0;">
 
-          <!-- Add vehicle -->
           <div class="panel">
             <div class="panel-head">
               <div class="panel-title">Add vehicle</div>
@@ -142,11 +131,9 @@
             </form>
           </div>
 
-          <!-- Vehicles list -->
           <div class="panel">
             <div class="panel-head">
               <div class="panel-title">All vehicles</div>
-
               <div class="driver-list-controls">
                 <label class="switch">
                   <input type="checkbox" id="show-inactive-toggle" />
@@ -155,7 +142,6 @@
                 <div class="panel-count" id="vehicle-count">0</div>
               </div>
             </div>
-
             <div id="vehicle-list" class="data-list">
               <p class="empty">Loading…</p>
             </div>

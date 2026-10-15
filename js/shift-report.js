@@ -1,4 +1,4 @@
-/* Qafila shift detail page */
+/* Qafila shift report page */
 
 (function () {
   if (!getToken()) {
@@ -12,10 +12,11 @@
   const shiftMeta       = document.getElementById('shift-meta');
   const behaviorPanel   = document.getElementById('behavior-panel');
   const eventsPanel     = document.getElementById('events-panel');
+  const eventsCount     = document.getElementById('events-count');
   const alertsPanel     = document.getElementById('alerts-panel');
+  const alertsCount     = document.getElementById('alerts-count');
   const predictionsPanel= document.getElementById('predictions-panel');
-  const managerNameEl   = document.getElementById('manager-name');
-  const logoutBtn       = document.getElementById('logout-btn');
+  const predictionsCount= document.getElementById('predictions-count');
 
   function el(tag, cls, text) {
     const e = document.createElement(tag);
@@ -36,20 +37,13 @@
     return new Date(ts + 'Z').toLocaleString();
   }
 
-  function decodeToken() {
-    try {
-      const t = getToken();
-      if (!t) return null;
-      return JSON.parse(atob(t.split('.')[1]));
-    } catch (_) { return null; }
-  }
-
   async function load() {
     if (!shiftId) {
       shiftMeta.innerHTML = '';
       shiftMeta.appendChild(el('p', 'empty', 'No shift id in URL.'));
       return;
     }
+
     try {
       const data = await apiFetch('/api/shifts/' + shiftId);
       renderShift(data);
@@ -64,7 +58,7 @@
 
     /* Shift meta */
     shiftMeta.innerHTML = '';
-    kv(shiftMeta, 'Driver', shift.driver_name);
+    kv(shiftMeta, 'Driver', shift.driver_name || 'Unassigned');
     kv(shiftMeta, 'Employee ID', shift.driver_employee_id);
     kv(shiftMeta, 'Phone', shift.driver_phone);
     kv(shiftMeta, 'Vehicle', shift.vehicle_plate);
@@ -88,6 +82,8 @@
 
     /* Events */
     eventsPanel.innerHTML = '';
+    eventsCount.textContent = String(Array.isArray(events) ? events.length : 0);
+
     if (!events || events.length === 0) {
       eventsPanel.appendChild(el('p', 'empty', 'No events.'));
     } else {
@@ -104,6 +100,8 @@
 
     /* Alerts */
     alertsPanel.innerHTML = '';
+    alertsCount.textContent = String(Array.isArray(alerts) ? alerts.length : 0);
+
     if (!alerts || alerts.length === 0) {
       alertsPanel.appendChild(el('p', 'empty', 'No alerts.'));
     } else {
@@ -111,19 +109,20 @@
         const cls = a.level === 'red' ? 'crit' : 'warn';
         const item = el('div', `alert-item ${cls}`);
         const head = el('div', 'alert-head');
-        head.appendChild(el(
-          'span', 'alert-level',
-          a.level === 'red' ? 'Critical' : 'Warning'
-        ));
+        head.appendChild(el('span', 'alert-level',
+          a.level === 'red' ? 'Critical' : 'Warning'));
         head.appendChild(el('span', 'alert-time', fmt(a.ts)));
         item.appendChild(head);
-        item.appendChild(el('div', 'alert-msg', a.message || a.parameter || ''));
+        item.appendChild(el('div', 'alert-msg',
+          a.message || a.parameter || ''));
         alertsPanel.appendChild(item);
       });
     }
 
     /* Predictions */
     predictionsPanel.innerHTML = '';
+    predictionsCount.textContent = String(Array.isArray(predictions) ? predictions.length : 0);
+
     if (!predictions || predictions.length === 0) {
       predictionsPanel.appendChild(el('p', 'empty', 'No predictions.'));
     } else {
@@ -139,16 +138,5 @@
     }
   }
 
-  function setupManager() {
-    const payload = decodeToken();
-    managerNameEl.textContent = payload && payload.name ? payload.name : '—';
-  }
-
-  logoutBtn.addEventListener('click', () => {
-    clearToken();
-    location.href = '../login.html';
-  });
-
-  setupManager();
   load();
 })();

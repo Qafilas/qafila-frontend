@@ -314,7 +314,7 @@
         row.appendChild(right);
 
         row.addEventListener('click', () => {
-          location.href = `pages/shift.html?id=${s.id}`;
+          location.href = `pages/shift-report.html?id=${s.id}`;
         });
         row.style.cursor = 'pointer';
 
@@ -352,10 +352,13 @@
      ============================================================ */
 
   setupManager();
-  loadMetrics();
-  loadAlerts();
-  loadPredictions();
-  loadRecentReports();
+
+  requestAnimationFrame(() => {
+    loadMetrics();
+    loadAlerts();
+    loadPredictions();
+    loadRecentReports();
+  });
 
   setInterval(loadMetrics, 10000);
   setInterval(loadAlerts, 5000);

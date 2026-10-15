@@ -31,11 +31,11 @@
 
   const EXPECTED_COLUMNS = [
     'name', 'employee_id', 'phone', 'license',
-    'plate', 'make', 'model', 'year', 'node_id'
+    'plate', 'make', 'model', 'year', 'node_id',
+    'shift_start', 'shift_end', 'days'
   ];
 
-  let parsedRows = [];   /* [{ name, employee_id, ... }] */
-  let parsedErrors = []; /* strings from parsing */
+  let parsedRows = [];
 
   /* ============================================================
      Helpers
@@ -54,9 +54,9 @@
 
   downloadBtn.addEventListener('click', () => {
     const header = EXPECTED_COLUMNS.join(',');
-    const sample1 = 'Ahmed Al-Mansoori,EMP-0142,+97455512345,QA-123456,12345,Toyota,Hiace,2020,NODE-001';
-    const sample2 = 'Khalid Al-Kuwari,EMP-0187,+97455567890,QA-234567,67890,Nissan,Urvan,2022,NODE-002';
-    const sample3 = 'Sara Al-Thani,EMP-0203,+97455598765,QA-345678,,,,,';
+    const sample1 = 'Ahmed Al-Mansoori,EMP-0142,+97455512345,QA-123456,12345,Toyota,Hiace,2020,NODE-001,06:00,14:00,Sun-Thu';
+    const sample2 = 'Khalid Al-Kuwari,EMP-0187,+97455567890,QA-234567,67890,Nissan,Urvan,2022,NODE-002,14:00,22:00,Sun-Thu';
+    const sample3 = 'Sara Al-Thani,EMP-0203,+97455598765,QA-345678,,,,,22:00,06:00,Mon-Fri';
     const content = [header, sample1, sample2, sample3].join('\n');
 
     const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
@@ -71,7 +71,7 @@
   });
 
   /* ============================================================
-     CSV parser (handles quotes and commas inside quotes)
+     CSV parser
      ============================================================ */
 
   function parseCSV(text) {
@@ -81,7 +81,6 @@
     let inQuotes = false;
     let i = 0;
 
-    /* Strip BOM if present */
     if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
 
     while (i < text.length) {
@@ -124,9 +123,11 @@
     }
 
     const header = matrix[0].map(h => String(h).trim().toLowerCase());
-
-    const missing = EXPECTED_COLUMNS.filter(col => !header.includes(col));
     const errors = [];
+
+    /* Only require the original core columns — schedule ones are optional */
+    const required = ['name', 'employee_id', 'plate'];
+    const missing = required.filter(col => !header.includes(col));
     if (missing.length) {
       errors.push('Missing column(s): ' + missing.join(', '));
     }
@@ -135,8 +136,6 @@
 
     for (let i = 1; i < matrix.length; i++) {
       const line = matrix[i];
-
-      /* Skip completely empty lines */
       if (line.length === 1 && line[0].trim() === '') continue;
 
       const obj = {};
@@ -144,7 +143,6 @@
         const idx = header.indexOf(col);
         obj[col] = idx >= 0 ? String(line[idx] ?? '').trim() : '';
       });
-
       rows.push(obj);
     }
 
@@ -176,7 +174,6 @@
       const { rows, errors } = csvToObjects(text);
 
       parsedRows = rows;
-      parsedErrors = errors;
 
       if (errors.length) {
         importErr.textContent = errors.join(' · ');
@@ -199,7 +196,7 @@
   });
 
   /* ============================================================
-     Preview + summary
+     Preview
      ============================================================ */
 
   function renderPreview() {
@@ -243,6 +240,7 @@
     let withDriver = 0;
     let withVehicle = 0;
     let withBoth = 0;
+    let withSchedule = 0;
     let emptyRows = 0;
 
     const seenEmp = new Set();
@@ -253,11 +251,13 @@
     parsedRows.forEach(r => {
       const hasDriver  = r.employee_id && r.name;
       const hasVehicle = r.plate;
+      const hasSchedule = r.shift_start || r.shift_end || r.days;
 
       if (!r.employee_id && !r.plate) { emptyRows++; return; }
       if (hasDriver) withDriver++;
       if (hasVehicle) withVehicle++;
       if (hasDriver && hasVehicle) withBoth++;
+      if (hasSchedule) withSchedule++;
 
       if (r.employee_id) {
         if (seenEmp.has(r.employee_id)) duplicateEmp++;
@@ -273,7 +273,8 @@
       { k: 'Total rows in file',   v: parsedRows.length },
       { k: 'Rows with a driver',   v: withDriver },
       { k: 'Rows with a vehicle',  v: withVehicle },
-      { k: 'Rows with both',       v: withBoth }
+      { k: 'Rows with both',       v: withBoth },
+      { k: 'Rows with a shift schedule', v: withSchedule }
     ];
 
     if (duplicateEmp > 0)   rows.push({ k: 'Duplicate employee IDs in file', v: duplicateEmp, warn: true });
@@ -303,7 +304,6 @@
         method: 'POST',
         body: JSON.stringify({ rows: parsedRows })
       });
-
       renderResult(res);
     } catch (err) {
       importErr.textContent = 'Import failed: ' + err.message;
@@ -350,7 +350,6 @@
 
   cancelBtn.addEventListener('click', () => {
     parsedRows = [];
-    parsedErrors = [];
     fileInput.value = '';
     fileNameEl.textContent = 'No file selected';
     previewPanel.hidden = true;

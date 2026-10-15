@@ -99,6 +99,15 @@
     const sub1 = [d.employee_id, d.phone || 'no phone', d.license || 'no license'];
     left.appendChild(el('div', 'data-item-sub', sub1.join(' · ')));
 
+    if (d.shift_start || d.shift_end || d.shift_days) {
+      const parts = [];
+      if (d.shift_start || d.shift_end) {
+        parts.push(`Shift ${d.shift_start || '—'}–${d.shift_end || '—'}`);
+      }
+      if (d.shift_days) parts.push(d.shift_days);
+      left.appendChild(el('div', 'data-item-sub shift-line', parts.join(' · ')));
+    }
+
     const right = el('div', 'data-item-right');
 
     right.appendChild(el('span',
@@ -184,6 +193,39 @@
     licRow.appendChild(licInput);
     form.appendChild(licRow);
 
+    /* Shift start */
+    const startRow = el('div', 'edit-row');
+    startRow.appendChild(el('label', 'edit-label', 'Shift start'));
+    const startInput = document.createElement('input');
+    startInput.type = 'text';
+    startInput.value = d.shift_start || '';
+    startInput.placeholder = '06:00';
+    startInput.className = 'edit-input';
+    startRow.appendChild(startInput);
+    form.appendChild(startRow);
+
+    /* Shift end */
+    const endRow = el('div', 'edit-row');
+    endRow.appendChild(el('label', 'edit-label', 'Shift end'));
+    const endInput = document.createElement('input');
+    endInput.type = 'text';
+    endInput.value = d.shift_end || '';
+    endInput.placeholder = '14:00';
+    endInput.className = 'edit-input';
+    endRow.appendChild(endInput);
+    form.appendChild(endRow);
+
+    /* Shift days */
+    const daysRow = el('div', 'edit-row');
+    daysRow.appendChild(el('label', 'edit-label', 'Shift days'));
+    const daysInput = document.createElement('input');
+    daysInput.type = 'text';
+    daysInput.value = d.shift_days || '';
+    daysInput.placeholder = 'Sun-Thu';
+    daysInput.className = 'edit-input';
+    daysRow.appendChild(daysInput);
+    form.appendChild(daysRow);
+
     /* Error message */
     const errP = el('p', 'auth-error', '');
     errP.hidden = true;
@@ -209,7 +251,10 @@
           body: JSON.stringify({
             name: nameInput.value.trim(),
             phone: fullPhone,
-            license: licInput.value.trim()
+            license: licInput.value.trim(),
+            shift_start: startInput.value.trim() || null,
+            shift_end: endInput.value.trim() || null,
+            shift_days: daysInput.value.trim() || null
           })
         });
         editingId = null;
@@ -246,17 +291,28 @@
     driverSubmit.disabled = true;
     driverSubmit.textContent = 'Adding…';
 
-    const name      = document.getElementById('d-name').value.trim();
-    const employee  = document.getElementById('d-employee').value.trim();
-    const phoneCode = document.getElementById('d-phone-code').value;
-    const phoneNum  = document.getElementById('d-phone').value.trim().replace(/\s+/g, '');
-    const phone     = phoneNum ? (phoneCode + phoneNum) : '';
-    const license   = document.getElementById('d-license').value.trim();
+    const name       = document.getElementById('d-name').value.trim();
+    const employee   = document.getElementById('d-employee').value.trim();
+    const phoneCode  = document.getElementById('d-phone-code').value;
+    const phoneNum   = document.getElementById('d-phone').value.trim().replace(/\s+/g, '');
+    const phone      = phoneNum ? (phoneCode + phoneNum) : '';
+    const license    = document.getElementById('d-license').value.trim();
+    const shiftStart = document.getElementById('d-shift-start').value.trim();
+    const shiftEnd   = document.getElementById('d-shift-end').value.trim();
+    const shiftDays  = document.getElementById('d-days').value.trim();
 
     try {
       await apiFetch('/api/drivers', {
         method: 'POST',
-        body: JSON.stringify({ name, employee_id: employee, phone, license })
+        body: JSON.stringify({
+          name,
+          employee_id: employee,
+          phone,
+          license,
+          shift_start: shiftStart || null,
+          shift_end: shiftEnd || null,
+          shift_days: shiftDays || null
+        })
       });
 
       driverOk.textContent = 'Driver added.';

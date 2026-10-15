@@ -230,6 +230,15 @@
       if (d.phone) subParts.push(d.phone);
       left.appendChild(el('div', 'pair-item-sub', subParts.join(' · ')));
 
+      if (d.shift_start || d.shift_end || d.shift_days) {
+        const parts = [];
+        if (d.shift_start || d.shift_end) {
+          parts.push(`Shift ${d.shift_start || '—'}–${d.shift_end || '—'}`);
+        }
+        if (d.shift_days) parts.push(d.shift_days);
+        left.appendChild(el('div', 'pair-item-sub shift-line', parts.join(' · ')));
+      }
+
       const right = el('div', 'pair-item-right');
 
       if (assignedByDriverId[d.id]) {

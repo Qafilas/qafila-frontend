@@ -1,130 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qafila — Predictions</title>
-  <link rel="stylesheet" href="../css/base.css" />
-  <link rel="stylesheet" href="../css/layout.css" />
-  <link rel="stylesheet" href="../css/components.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Predictions – Qafila</title>
+  <meta name="theme-color" content="#172026">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&family=Reem+Kufi:wght@500;600&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <script src="../js/theme.js"></script>
 </head>
-<body class="app-body">
-
-  <div class="top-strip ok" id="top-strip"></div>
-
-  <div class="app-shell">
-
-     <aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <span class="brand-mark" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </span>
-    <span class="sidebar-brand-text">Qafila</span>
-  </div>
-
-  <nav class="sidebar-nav">
-    <div class="sidebar-section-label">Fleet</div>
-    <a href="../index.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Dashboard</span>
-    </a>
-    <a href="operations.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Operations</span>
-    </a>
-    <a href="drivers.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Drivers</span>
-    </a>
-    <a href="vehicles.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Vehicles</span>
-    </a>
-    <a href="shifts.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Shifts</span>
-    </a>
-
-    <div class="sidebar-section-label">Insights</div>
-    <a href="predictions.html" class="sidebar-link active">
-      <span class="sidebar-link-mark"></span><span>Predictions</span>
-    </a>
-
-    <div class="sidebar-section-label">System</div>
-    <a href="import.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Import</span>
-    </a>
-    <a href="settings.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Settings</span>
-    </a>
-  </nav>
-
-  <div class="sidebar-foot">
-    <div class="sidebar-live">
-      <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
-      <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
-    </div>
-    <div class="sidebar-user">
-      <div class="sidebar-user-name" id="manager-name">—</div>
-      <div class="sidebar-user-role">Manager</div>
-    </div>
-    <button class="sidebar-logout" id="logout-btn">Log out</button>
-  </div>
-</aside>
-
-    <main class="main-area">
-
-      <header class="main-topbar">
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-          <span></span><span></span><span></span>
-        </button>
-
-        <div class="main-topbar-title">
-          <div class="main-topbar-page">Predictions</div>
-          <div class="main-topbar-date" id="hero-date">—</div>
-        </div>
-
-        <div class="main-topbar-right">
-          <div class="main-clock" id="hero-time">--:--:--</div>
-          <span class="hero-pill ok" id="hero-pill">
-            <span class="hero-pill-dot"></span>
-            <span class="hero-pill-text" id="hero-pill-text">Ready</span>
-          </span>
-        </div>
-      </header>
-
-      <section class="ops-wrap">
-
-        <!-- ============================================================
-             Predictive maintenance (weekly OLS)
-             ============================================================ -->
-        <div class="dash-panel">
-          <div class="panel-head">
-            <div class="panel-title">Predictive maintenance</div>
-            <div class="panel-count" id="predictions-count">0</div>
-          </div>
-
-          <div id="predictions-list" class="pred-list dash-panel-body">
-            <p class="empty">Loading…</p>
-          </div>
-        </div>
-
-        <!-- ============================================================
-             Gasket indirect symptoms (live, only flagged vehicles)
-             ============================================================ -->
-        <div class="dash-panel">
-          <div class="panel-head">
-            <div class="panel-title">Gasket indirect symptoms</div>
-            <div class="panel-count" id="gasket-count">0</div>
-          </div>
-
-          <div id="gasket-list" class="gasket-list dash-panel-body">
-            <p class="empty">Loading…</p>
-          </div>
-        </div>
-
-      </section>
-
+<body data-page="predictions">
+  <div class="shell">
+    <div id="side-slot"></div>
+    <main class="main" id="main">
+      <header class="topbar" data-title="Maintenance predictions"></header>
+      <div class="page" id="page"></div>
     </main>
   </div>
 
   <script src="../js/api.js"></script>
+  <script src="../js/ui.js"></script>
   <script src="../js/shell.js"></script>
-  <script src="../js/predictions.js"></script>
+  <script src="../js/fleet.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/pages/predictions.js"></script>
 </body>
 </html>

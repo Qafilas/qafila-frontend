@@ -1,138 +1,213 @@
-/* ============================================================================
-   QAFILA — Base
-   Tokens, reset, buttons, top strip, brand mark, utilities, scrollbar
-   ========================================================================= */
+/* ============================================================
+   QAFILA — base
+   Tokens, theme, reset, typography, utilities.
 
+   Palette
+     limestone   page background
+     asphalt     ink, sidebar
+     maroon      brand, primary action (Qatar maroon)
+     road        warning (road-marking yellow)
+     signal      critical
+     go          normal / ready
+     duty        on shift (the device's blue LED)
+   ============================================================ */
 
-/* ---------- Design tokens ---------- */
 :root {
-  --bg:           #0b1220;
-  --bg-grad:      radial-gradient(1200px 600px at 20% -10%, #12203b 0%, #0b1220 55%);
-  --surface:      #111a2e;
-  --surface-2:    #16213c;
-  --surface-3:    #1b2948;
+  color-scheme: light;
 
-  --border:       #1f2c4a;
-  --border-strong:#2b3a63;
+  --bg:          #EEF0EB;
+  --surface:     #FFFFFF;
+  --surface-2:   #F6F7F4;
+  --surface-3:   #E9ECE6;
+  --ink:         #172026;
+  --ink-2:       #4C5860;
+  --ink-3:       #7F8A92;
+  --line:        #DDE1DA;
+  --line-strong: #C3CAC2;
 
-  --text:         #e6edf7;
-  --text-2:       #8b9bb4;
-  --text-3:       #5b6b8a;
+  --maroon:      #8A1538;
+  --maroon-2:    #6F0F2C;
+  --maroon-soft: #F5E6EB;
+  --maroon-text: #8A1538;
 
-  --accent:       #4f9cf9;
-  --accent-hover: #6aa9ff;
-  --accent-soft:  rgba(79, 156, 249, 0.12);
+  --road:        #E2A400;
+  --road-soft:   #FBF1D2;
+  --road-text:   #805B00;
 
-  --ok:           #10b981;
-  --ok-soft:      rgba(16, 185, 129, 0.12);
-  --warn:         #f59e0b;
-  --warn-soft:    rgba(245, 158, 11, 0.12);
-  --crit:         #ef4444;
-  --crit-soft:    rgba(239, 68, 68, 0.12);
+  --signal:      #C42D29;
+  --signal-soft: #FBE5E3;
+  --signal-text: #A8231F;
 
-  --radius:       10px;
-  --radius-sm:    6px;
-  --radius-xs:    4px;
+  --go:          #1F8A5A;
+  --go-soft:     #E0F2E8;
+  --go-text:     #18704A;
 
-  --pad:          20px;
-  --gap:          16px;
+  --duty:        #2A60B0;
+  --duty-soft:   #E3ECF8;
+  --duty-text:   #23528F;
 
-  --font:         -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
-                  Roboto, Helvetica, Arial, sans-serif;
-  --mono:         "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  --off:         #A2ABB2;
+
+  --side-bg:     #172026;
+  --side-ink:    #C9D0D4;
+  --side-ink-2:  #7D8A93;
+  --side-line:   #26323A;
+  --side-hover:  #1F2A31;
+
+  --shadow-pop:  0 12px 32px -8px rgba(23, 32, 38, .28), 0 2px 6px rgba(23, 32, 38, .08);
+  --focus:       0 0 0 3px rgba(138, 21, 56, .28);
+
+  --r-xs: 3px;
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+
+  --font:   "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --arabic: "Reem Kufi", "Noto Kufi Arabic", "Geeza Pro", sans-serif;
+  --mono:   "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --side-w: 248px;
+  --top-h:  68px;
+  --gutter: 28px;
 }
 
+/* ---------- Dark theme ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg:          #0F1416;
+  --surface:     #161D21;
+  --surface-2:   #1B2328;
+  --surface-3:   #222C32;
+  --ink:         #E7EBE8;
+  --ink-2:       #A9B3B8;
+  --ink-3:       #75818A;
+  --line:        #263137;
+  --line-strong: #34424A;
+
+  --maroon:      #A61D48;
+  --maroon-2:    #BF2A58;
+  --maroon-soft: #3A1622;
+  --maroon-text: #F08DAB;
+
+  --road:        #F0B518;
+  --road-soft:   #3A2F12;
+  --road-text:   #F6CB5A;
+
+  --signal:      #E5443F;
+  --signal-soft: #3D1A19;
+  --signal-text: #FF8F8A;
+
+  --go:          #2FAE74;
+  --go-soft:     #15301F;
+  --go-text:     #6FD3A2;
+
+  --duty:        #4C87DD;
+  --duty-soft:   #182A42;
+  --duty-text:   #9CC0F2;
+
+  --off:         #5D6A72;
+
+  --side-bg:     #0B0F11;
+  --side-ink:    #C9D0D4;
+  --side-ink-2:  #6F7C85;
+  --side-line:   #1C2529;
+  --side-hover:  #151C20;
+
+  --shadow-pop:  0 16px 40px -8px rgba(0, 0, 0, .6), 0 2px 6px rgba(0, 0, 0, .4);
+  --focus:       0 0 0 3px rgba(240, 141, 171, .35);
+}
 
 /* ---------- Reset ---------- */
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; min-height: 100vh; }
+html { -webkit-text-size-adjust: 100%; }
+
+html, body { margin: 0; padding: 0; }
 
 body {
+  min-height: 100vh;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.5;
-  color: var(--text);
+  color: var(--ink);
   background: var(--bg);
-  background-image: var(--bg-grad);
-  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-variant-numeric: tabular-nums;
 }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { color: var(--accent-hover); }
+img, svg { display: block; max-width: 100%; }
+.ic { width: 16px; height: 16px; flex: none; }
 
-h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+a { color: var(--maroon-text); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+h1, h2, h3, h4 { margin: 0; color: var(--ink); }
 p { margin: 0; }
 
-button { font-family: inherit; font-size: inherit; cursor: pointer; }
-input, select, textarea { font-family: inherit; font-size: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
 
+:focus-visible { outline: none; box-shadow: var(--focus); border-radius: var(--r-sm); }
 
-/* ---------- Top strip ---------- */
-.top-strip {
-  height: 3px;
-  width: 100%;
-  background: var(--accent);
-  transition: background 0.3s ease;
+::selection { background: var(--maroon); color: #fff; }
+
+[hidden] { display: none !important; }
+
+/* ---------- Type scale (1.2 minor third) ---------- */
+.t-display {
+  font-stretch: 118%;
+  font-weight: 650;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
 }
-.top-strip.ok   { background: var(--ok); }
-.top-strip.warn { background: var(--warn); }
-.top-strip.crit { background: var(--crit); }
 
-
-/* ---------- Brand mark ---------- */
-.brand-mark {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 14px;
-  margin-right: 8px;
-  vertical-align: middle;
+.t-h2 {
+  font-stretch: 112%;
+  font-weight: 650;
+  font-size: 17px;
+  line-height: 1.25;
 }
-.brand-mark span { display: block; width: 3px; border-radius: 1px; background: var(--accent); }
-.brand-mark span:nth-child(1) { height: 8px; }
-.brand-mark span:nth-child(2) { height: 14px; }
-.brand-mark span:nth-child(3) { height: 11px; }
 
-
-/* ---------- Buttons ---------- */
-.btn {
-  padding: 8px 14px;
-  background: transparent;
-  border: 1px solid var(--border-strong);
-  color: var(--text);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 500;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
-}
-.btn:hover { border-color: var(--accent); color: var(--accent); }
-
-.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #0b1220;
+.t-h3 {
   font-weight: 600;
-}
-.btn-primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-  color: #0b1220;
+  font-size: 14.5px;
+  line-height: 1.3;
 }
 
-.btn-danger { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
-.btn-danger:hover { border-color: var(--crit); color: var(--crit); }
-
+.t-small { font-size: 12.5px; }
+.t-muted { color: var(--ink-2); }
+.t-faint { color: var(--ink-3); }
+.t-mono  { font-family: var(--mono); font-size: 12.5px; letter-spacing: -0.01em; }
+.t-num   { font-variant-numeric: tabular-nums; }
+.t-crit  { color: var(--signal-text); }
+.t-warn  { color: var(--road-text); }
+.t-ok    { color: var(--go-text); }
 
 /* ---------- Utilities ---------- */
-.hidden { display: none !important; }
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
 
+.row   { display: flex; align-items: center; gap: 10px; }
+.row-w { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.grow  { flex: 1 1 auto; min-width: 0; }
+.nowrap { white-space: nowrap; }
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ---------- Scrollbar ---------- */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #3a4d80; }
+/* ---------- Scrollbars ---------- */
+* { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

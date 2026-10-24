@@ -1,186 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qafila — Drivers</title>
-  <link rel="stylesheet" href="../css/base.css" />
-  <link rel="stylesheet" href="../css/layout.css" />
-  <link rel="stylesheet" href="../css/components.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drivers – Qafila</title>
+  <meta name="theme-color" content="#172026">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&family=Reem+Kufi:wght@500;600&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <script src="../js/theme.js"></script>
 </head>
-<body class="app-body">
-
-  <div class="top-strip ok" id="top-strip"></div>
-
-  <div class="app-shell">
-
-    <aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <span class="brand-mark" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </span>
-    <span class="sidebar-brand-text">Qafila</span>
-  </div>
-
-  <nav class="sidebar-nav">
-    <div class="sidebar-section-label">Fleet</div>
-    <a href="../index.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Dashboard</span>
-    </a>
-    <a href="operations.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Operations</span>
-    </a>
-    <a href="drivers.html" class="sidebar-link active">
-      <span class="sidebar-link-mark"></span><span>Drivers</span>
-    </a>
-    <a href="vehicles.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Vehicles</span>
-    </a>
-    <a href="shifts.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Shifts</span>
-    </a>
-
-    <div class="sidebar-section-label">Insights</div>
-    <a href="predictions.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Predictions</span>
-    </a>
-
-    <div class="sidebar-section-label">System</div>
-    <a href="import.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Import</span>
-    </a>
-    <a href="settings.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Settings</span>
-    </a>
-  </nav>
-
-  <div class="sidebar-foot">
-    <div class="sidebar-live">
-      <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
-      <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
-    </div>
-    <div class="sidebar-user">
-      <div class="sidebar-user-name" id="manager-name">—</div>
-      <div class="sidebar-user-role">Manager</div>
-    </div>
-    <button class="sidebar-logout" id="logout-btn">Log out</button>
-  </div>
-</aside>
-
-    <main class="main-area">
-
-      <header class="main-topbar">
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-          <span></span><span></span><span></span>
-        </button>
-
-        <div class="main-topbar-title">
-          <div class="main-topbar-page">Drivers</div>
-          <div class="main-topbar-date" id="hero-date">—</div>
-        </div>
-
-        <div class="main-topbar-right">
-          <div class="main-clock" id="hero-time">--:--:--</div>
-          <span class="hero-pill ok" id="hero-pill">
-            <span class="hero-pill-dot"></span>
-            <span class="hero-pill-text" id="hero-pill-text">Ready</span>
-          </span>
-        </div>
-      </header>
-
-      <section class="main-section" style="padding-top:24px;">
-        <div class="app-layout page-single" style="padding:0;">
-
-          <div class="panel">
-            <div class="panel-head">
-              <div class="panel-title">Add driver</div>
-            </div>
-
-            <form id="driver-form" class="form-grid">
-              <div class="form-row">
-                <label for="d-name">Full name</label>
-                <input type="text" id="d-name" required />
-              </div>
-
-              <div class="form-row">
-                <label for="d-employee">Employee ID</label>
-                <input type="text" id="d-employee" required placeholder="EMP-0142" />
-              </div>
-
-              <div class="form-row">
-                <label for="d-phone">Phone</label>
-                <div class="phone-field">
-                  <select id="d-phone-code">
-                    <option value="+974" selected>+974  Qatar</option>
-                    <option value="+966">+966  Saudi Arabia</option>
-                    <option value="+971">+971  UAE</option>
-                    <option value="+965">+965  Kuwait</option>
-                    <option value="+973">+973  Bahrain</option>
-                    <option value="+968">+968  Oman</option>
-                    <option value="+20">+20  Egypt</option>
-                    <option value="+91">+91  India</option>
-                    <option value="+92">+92  Pakistan</option>
-                    <option value="+63">+63  Philippines</option>
-                    <option value="+44">+44  United Kingdom</option>
-                    <option value="+1">+1  United States</option>
-                  </select>
-                  <input type="text" id="d-phone" placeholder="55512345" inputmode="numeric" />
-                </div>
-              </div>
-
-              <div class="form-row">
-                <label for="d-license">License</label>
-                <input type="text" id="d-license" placeholder="QA-XXXXXX" />
-              </div>
-
-                            <div class="form-row">
-                <label for="d-shift-start">Shift start</label>
-                <input type="text" id="d-shift-start" placeholder="06:00" />
-              </div>
-
-              <div class="form-row">
-                <label for="d-shift-end">Shift end</label>
-                <input type="text" id="d-shift-end" placeholder="14:00" />
-              </div>
-
-              <div class="form-row">
-                <label for="d-days">Shift days</label>
-                <input type="text" id="d-days" placeholder="Sun-Thu" />
-                <div class="form-hint">Examples: Sun-Thu, Mon-Fri, All</div>
-              </div>
-
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary" id="driver-submit">Add driver</button>
-                <p id="driver-error" class="auth-error" hidden></p>
-                <p id="driver-success" class="auth-success" hidden></p>
-              </div>
-            </form>
-          </div>
-
-          <div class="panel">
-            <div class="panel-head">
-              <div class="panel-title">All drivers</div>
-              <div class="driver-list-controls">
-                <label class="switch">
-                  <input type="checkbox" id="show-inactive-toggle" />
-                  <span class="switch-label">Show inactive</span>
-                </label>
-                <div class="panel-count" id="driver-count">0</div>
-              </div>
-            </div>
-            <div id="driver-list" class="data-list">
-              <p class="empty">Loading…</p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
+<body data-page="drivers">
+  <div class="shell">
+    <div id="side-slot"></div>
+    <main class="main" id="main">
+      <header class="topbar" data-title="Drivers"></header>
+      <div class="page" id="page"></div>
     </main>
   </div>
 
   <script src="../js/api.js"></script>
+  <script src="../js/ui.js"></script>
   <script src="../js/shell.js"></script>
-  <script src="../js/drivers.js"></script>
+  <script src="../js/fleet.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/pages/drivers.js"></script>
 </body>
 </html>

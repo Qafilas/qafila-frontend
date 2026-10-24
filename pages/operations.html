@@ -1,157 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qafila — Operations</title>
-  <link rel="stylesheet" href="../css/base.css" />
-  <link rel="stylesheet" href="../css/layout.css" />
-  <link rel="stylesheet" href="../css/components.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operations – Qafila</title>
+  <meta name="theme-color" content="#172026">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&family=Reem+Kufi:wght@500;600&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <script src="../js/theme.js"></script>
 </head>
-<body class="app-body">
-
-  <div class="top-strip ok" id="top-strip"></div>
-
-  <div class="app-shell">
-
-    <aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <span class="brand-mark" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </span>
-    <span class="sidebar-brand-text">Qafila</span>
-  </div>
-
-  <nav class="sidebar-nav">
-    <div class="sidebar-section-label">Fleet</div>
-    <a href="../index.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Dashboard</span>
-    </a>
-    <a href="operations.html" class="sidebar-link active">
-      <span class="sidebar-link-mark"></span><span>Operations</span>
-    </a>
-    <a href="drivers.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Drivers</span>
-    </a>
-    <a href="vehicles.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Vehicles</span>
-    </a>
-    <a href="shifts.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Shifts</span>
-    </a>
-
-    <div class="sidebar-section-label">Insights</div>
-    <a href="predictions.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Predictions</span>
-    </a>
-
-    <div class="sidebar-section-label">System</div>
-    <a href="import.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Import</span>
-    </a>
-    <a href="settings.html" class="sidebar-link ">
-      <span class="sidebar-link-mark"></span><span>Settings</span>
-    </a>
-  </nav>
-
-  <div class="sidebar-foot">
-    <div class="sidebar-live">
-      <span class="sidebar-live-dot" id="sidebar-live-dot"></span>
-      <span class="sidebar-live-text" id="sidebar-live-text">Connecting…</span>
-    </div>
-    <div class="sidebar-user">
-      <div class="sidebar-user-name" id="manager-name">—</div>
-      <div class="sidebar-user-role">Manager</div>
-    </div>
-    <button class="sidebar-logout" id="logout-btn">Log out</button>
-  </div>
-</aside>
-
-    <main class="main-area">
-
-      <header class="main-topbar">
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-          <span></span><span></span><span></span>
-        </button>
-
-        <div class="main-topbar-title">
-          <div class="main-topbar-page">Operations</div>
-          <div class="main-topbar-date" id="hero-date">—</div>
-        </div>
-
-        <div class="main-topbar-right">
-          <div class="main-clock" id="hero-time">--:--:--</div>
-          <span class="hero-pill ok" id="hero-pill">
-            <span class="hero-pill-dot"></span>
-            <span class="hero-pill-text" id="hero-pill-text">Ready</span>
-          </span>
-        </div>
-      </header>
-
-      <section class="ops-wrap">
-
-        <div class="ops-summary">
-          <div class="ops-chip">
-            <span class="ops-chip-label">Active shifts</span>
-            <span class="ops-chip-value" id="ops-count-shifts">0</span>
-          </div>
-          <div class="ops-chip">
-            <span class="ops-chip-label">Unassigned</span>
-            <span class="ops-chip-value warn" id="ops-count-unassigned">0</span>
-          </div>
-          <div class="ops-chip">
-            <span class="ops-chip-label">Free drivers</span>
-            <span class="ops-chip-value ok" id="ops-count-free-drivers">0</span>
-          </div>
-          <div class="ops-chip">
-            <span class="ops-chip-label">Free vehicles</span>
-            <span class="ops-chip-value ok" id="ops-count-free-vehicles">0</span>
-          </div>
-        </div>
-
-        <div class="dash-panel">
-          <div class="panel-head">
-            <div class="panel-title">Active shifts</div>
-            <div class="panel-count" id="active-count">0</div>
-          </div>
-          <div id="active-shifts" class="data-list">
-            <p class="empty">Loading…</p>
-          </div>
-        </div>
-
-        <div class="ops-board">
-          <div class="dash-panel">
-            <div class="panel-head">
-              <div class="panel-title">Drivers</div>
-              <div class="panel-count" id="drivers-count">0</div>
-            </div>
-            <div id="drivers-col" class="pair-list">
-              <p class="empty">Loading…</p>
-            </div>
-          </div>
-
-          <div class="dash-panel">
-            <div class="panel-head">
-              <div class="panel-title">Vehicles</div>
-              <div class="panel-count" id="vehicles-count">0</div>
-            </div>
-            <div id="vehicles-col" class="pair-list">
-              <p class="empty">Loading…</p>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
+<body data-page="operations">
+  <div class="shell">
+    <div id="side-slot"></div>
+    <main class="main" id="main">
+      <header class="topbar" data-title="Operations"></header>
+      <div class="page" id="page"></div>
     </main>
   </div>
 
-  <div id="popup-root" class="popup-root"></div>
-
-  <script src="https://qafila-backend.onrender.com/socket.io/socket.io.js"></script>
   <script src="../js/api.js"></script>
-  <script src="../js/popup.js"></script>
+  <script src="../js/ui.js"></script>
   <script src="../js/shell.js"></script>
-  <script src="../js/operations.js"></script>
+  <script src="../js/fleet.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/pages/operations.js"></script>
 </body>
 </html>

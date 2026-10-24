@@ -12,7 +12,7 @@
 
   mount($('#page'),
     h('p', { class: 'page-lede' },
-      'Shifts start when a driver taps their card in a vehicle. The tap is accepted only for the driver paired with that vehicle, inside their shift window.'),
+      'A tap in a vehicle ends its open shift, or starts a shift for the paired driver whose window it is. Two drivers can share one vehicle: the first taps out, the second taps in.'),
     h('section', { class: 'panel', 'aria-labelledby': 'live-title' },
       h('div', { class: 'panel-head' },
         h('h2', { class: 't-h2', id: 'live-title' }, 'Active shifts'),
@@ -129,15 +129,21 @@
     }
   }
 
-  function driverChip(d, fromVehicleId) {
+  function driverChip(d, fromVehicleId, onRemove) {
     const chip = h('span', {
       class: 'driver-chip' + (d.active ? '' : ' inactive'),
       draggable: 'true',
-      title: 'Drag onto a vehicle to pair'
+      title: fromVehicleId ? 'Drag to another vehicle to move' : 'Drag onto a vehicle to pair'
     },
       h('span', { class: 'avatar' }, Q.initials(d.name)),
-      h('span', { class: 'name' }, d.name),
-      d.active ? null : h('span', { class: 'tag' }, 'Inactive'));
+      h('span', { class: 'chip-text' },
+        h('span', { class: 'name' }, d.name),
+        fromVehicleId ? h('span', { class: 'chip-sub' }, Q.fmtWindow(d.shift_start, d.shift_end) || 'No window') : null),
+      d.active ? null : h('span', { class: 'tag' }, 'Inactive'),
+      onRemove ? h('button', {
+        class: 'chip-x', type: 'button', 'aria-label': `Remove ${d.name}`, title: 'Remove from this vehicle',
+        onclick: e => { e.stopPropagation(); onRemove(); }
+      }, icon('x')) : null);
     chip.addEventListener('dragstart', e => {
       dragged = { driverId: d.id, fromVehicleId };
       chip.classList.add('dragging');
@@ -150,10 +156,10 @@
 
   function renderPairs() {
     const active = vehicles.filter(v => v.active);
-    const unpaired = active.filter(v => !v.default_driver_id).length;
+    const unpaired = active.filter(v => !(v.drivers || []).length).length;
     pairNote.textContent = unpaired
-      ? `${unpaired} vehicle${unpaired === 1 ? ' has' : 's have'} no driver. Taps in ${unpaired === 1 ? 'it' : 'them'} are refused.`
-      : 'Every vehicle has a paired driver. Drag a driver onto a vehicle to change it.';
+      ? `${unpaired} vehicle${unpaired === 1 ? ' has' : 's have'} no driver, so taps there are refused. A vehicle can have several drivers in back-to-back shifts.`
+      : 'Drag a driver onto a vehicle to add them. A vehicle can have several drivers; the tap picks whoever\'s shift it is.';
 
     if (!active.length) {
       mount(pairBody, Q.empty('vehicles', 'No vehicles to pair',
@@ -165,15 +171,14 @@
     const byId = new Map(drivers.map(d => [d.id, d]));
 
     const vehicleRows = active.map(v => {
-      const d = byId.get(v.default_driver_id);
-      const slot = h('div', { class: 'slot' + (d ? ' filled' : '') },
-        d ? driverChip(d, v.id) : h('span', { class: 'slot-empty' }, 'Drop a driver here'),
-        d ? h('button', {
-          class: 'icon-btn danger', style: { marginLeft: 'auto' }, 'aria-label': `Unassign ${d.name} from ${v.plate}`, title: 'Unassign',
-          onclick: async () => {
-            try { await Q.fleet.pair(v, null); loadPairs(); } catch (err) { Q.toast({ level: 'crit', title: 'Could not unassign', text: err.message }); }
-          }
-        }, icon('x')) : null);
+      const vd = (v.drivers || []).map(x => byId.get(x.id) || x);
+      const slot = h('div', { class: 'slot' + (vd.length ? ' filled' : '') },
+        vd.length
+          ? vd.map(d => driverChip(d, v.id, async () => {
+              try { await Q.fleet.removeDriver(v, d); loadPairs(); }
+              catch (err) { Q.toast({ level: 'crit', title: 'Could not remove', text: err.message }); }
+            }))
+          : h('span', { class: 'slot-empty' }, 'Drop a driver here'));
 
       slot.addEventListener('dragover', e => { if (dragged) { e.preventDefault(); slot.classList.add('over'); } });
       slot.addEventListener('dragleave', () => slot.classList.remove('over'));
@@ -184,20 +189,20 @@
         const drv = byId.get(dragged.driverId);
         const from = dragged.fromVehicleId ? active.find(x => x.id === dragged.fromVehicleId) : null;
         try {
-          await Q.fleet.pair(v, drv);
-          if (from) await Q.api.patch(`/api/vehicles/${from.id}/pair`, { driver_id: null });
+          await Q.fleet.addDriver(v, drv);
+          if (from) await Q.api.del(`/api/vehicles/${from.id}/drivers/${drv.id}`);
         } catch (err) {
           Q.toast({ level: 'crit', title: 'Pairing failed', text: err.message });
         }
         loadPairs();
       });
 
-      const changeBtn = h('button', { class: 'btn btn-xs', type: 'button' }, d ? 'Change' : 'Pair driver');
+      const changeBtn = h('button', { class: 'btn btn-xs', type: 'button' }, vd.length ? 'Change' : 'Pair driver');
       changeBtn.addEventListener('click', () => Q.fleet.pairPicker(changeBtn, v, drivers, loadPairs));
 
       return h('div', { class: 'pair-row' },
         h('div', { style: { minWidth: '150px' } },
-          Q.plate(v.plate),
+          h('a', { href: Q.pagePath('vehicle') + '?id=' + v.id, title: 'Open vehicle details' }, Q.plate(v.plate)),
           h('div', { class: 'cell-sub', style: { marginTop: '4px' } },
             [v.make, v.model].filter(Boolean).join(' ') || 'Vehicle',
             v.vehicle_type ? `, ${String(Q.typeLabel(v.vehicle_type)).toLowerCase()}` : '')),
@@ -207,7 +212,7 @@
 
     /* driver pool */
     const pairedCount = new Map();
-    active.forEach(v => { if (v.default_driver_id) pairedCount.set(v.default_driver_id, (pairedCount.get(v.default_driver_id) || 0) + 1); });
+    active.forEach(v => (v.drivers || []).forEach(d => pairedCount.set(d.id, (pairedCount.get(d.id) || 0) + 1)));
     const pool = drivers.slice().sort((a, b) => (b.active - a.active) || ((pairedCount.get(a.id) ? 1 : 0) - (pairedCount.get(b.id) ? 1 : 0)) || a.name.localeCompare(b.name));
 
     mount(pairBody,

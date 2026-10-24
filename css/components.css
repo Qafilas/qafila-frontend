@@ -618,3 +618,12 @@
 .lc-tip-v { font-weight: 650; font-size: 13.5px; }
 .lc-tip-t { opacity: .75; }
 .lc-empty { padding: 28px 0; text-align: center; color: var(--ink-3); font-size: 13.5px; }
+.pick-box {
+  width: 18px; height: 18px; flex: none;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 4px;
+  color: #fff;
+}
+.popover-item.selected .pick-box { background: var(--maroon); border-color: var(--maroon); }
+.pick-box .ic { width: 12px; height: 12px; }

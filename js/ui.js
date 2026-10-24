@@ -175,6 +175,7 @@
 
   function fmtWindow(start, end) {
     if (!start || !end) return null;
+    if (start === end) return 'All day';
     return `${fmtHHMM(start)} – ${fmtHHMM(end)}`;
   }
 

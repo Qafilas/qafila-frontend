@@ -51,8 +51,11 @@
     }
   }
 
-  function trendPanel(s, daily) {
-    const points = daily.filter(d => d[s.key] !== null).map(d => ({ t: dayDate(d.day), v: Number(d[s.key]) }));
+  function trendPanel(s, daily, recent) {
+    let points = daily.filter(d => d[s.key] !== null).map(d => ({ t: dayDate(d.day), v: Number(d[s.key]) }));
+    /* Not enough days yet (first days of testing): show the last 24 hours instead */
+    const hourly = points.length < 3;
+    if (hourly) points = (recent || []).filter(r => r[s.key] !== null).map(r => ({ t: Q.parseTs(r.ts), v: Number(r[s.key]) }));
     const last = points[points.length - 1];
     const weekAgo4 = points.find(p => last && last.t - p.t <= 28 * 864e5);
     let change = last && weekAgo4 && weekAgo4 !== last ? last.v - weekAgo4.v : null;
@@ -63,16 +66,16 @@
       h('div', { class: 'trend-head' },
         h('div', null,
           h('div', { class: 't-h3' }, s.title),
-          h('div', { class: 'cell-sub' }, 'Daily average')),
+          h('div', { class: 'cell-sub' }, hourly ? 'Last 24 hours, 10-minute average' : 'Daily average')),
         h('div', { class: 'trend-now' },
           h('div', { class: 'trend-val ' + (cls ? 't-' + cls : '') }, last ? `${last.v.toFixed(s.digits)} ${s.unit}` : '—'),
-          change !== null ? h('div', { class: 'cell-sub' },
+          change !== null && !hourly ? h('div', { class: 'cell-sub' },
             `${change >= 0 ? '+' : ''}${change.toFixed(s.digits)} ${s.unit} over 4 weeks`) : null)),
       Q.lineChart({
         points, unit: s.unit, digits: s.digits, refs: s.refs, markers: points.length <= 45,
-        height: 190, gapMs: 3 * 864e5, label: `${s.title}, daily average`,
-        tickFormat: shortDay,
-        tipTime: d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }),
+        height: 190, gapMs: hourly ? 30 * 60e3 : 3 * 864e5, label: `${s.title}, ${hourly ? 'last 24 hours' : 'daily average'}`,
+        tickFormat: hourly ? (d => Q.fmtTime(d)) : shortDay,
+        tipTime: hourly ? (d => Q.fmtDateTime(d)) : (d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })),
         emptyText: 'No readings in this period.'
       }));
   }
@@ -111,10 +114,12 @@
                   v.vin ? h('span', { class: 't-mono', style: { marginLeft: '10px' } }, v.vin) : null)),
               Q.stateBadge(st)),
             h('div', { class: 'report-times' },
-              h('span', null, 'Paired driver',
-                h('b', null, v.driver_name || 'None'),
-                v.driver_phone ? h('a', { href: 'tel:' + v.driver_phone, class: 'cell-sub' }, v.driver_phone) : null),
-              h('span', null, 'Shift window', h('b', null, Q.fmtWindow(v.driver_shift_start, v.driver_shift_end) || '—')),
+              (v.drivers || []).length
+                ? (v.drivers || []).map((d, i) => h('span', null, v.drivers.length > 1 ? `Driver ${i + 1}` : 'Paired driver',
+                    h('b', null, d.name),
+                    h('span', { class: 'cell-sub' }, Q.fmtWindow(d.shift_start, d.shift_end) || 'No shift window'),
+                    d.phone ? h('a', { href: 'tel:' + d.phone, class: 'cell-sub' }, d.phone) : null))
+                : h('span', null, 'Paired driver', h('b', { class: 't-warn' }, 'None')),
               h('span', null, 'Board', h('b', { class: v.node ? 't-mono' : '' }, v.node || 'Unbound'),
                 v.node_last_seen ? h('span', { class: 'cell-sub' }, `Seen ${Q.fmtAgo(v.node_last_seen)}`) : null))),
           v.active_shift_id
@@ -134,7 +139,7 @@
           h('h2', { class: 't-h2' }, 'Engine health',
             h('div', { class: 'panel-sub' }, 'The readings the weekly prediction watches. A steady climb toward a dashed line is what it warns about.')),
           rangeSeg),
-        h('div', { class: 'trends' }, STREAMS.map(s => trendPanel(s, hist.daily || [])))),
+        h('div', { class: 'trends' }, STREAMS.map(s => trendPanel(s, hist.daily || [], hist.recent || [])))),
 
       /* Predictions + gasket */
       h('div', { class: 'cols-even' },

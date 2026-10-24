@@ -41,7 +41,7 @@
 
   mount($('#page'),
     h('div', { class: 'page-head' },
-      h('p', { class: 'page-lede' }, 'Each vehicle has one paired driver, and only that driver can start a shift in it. A board binds itself when it reads the car\'s VIN. If it cannot, it shows up here as Unbound and you assign it with one click.'),
+      h('p', { class: 'page-lede' }, 'A vehicle can have several paired drivers in back-to-back shifts; a card tap starts the shift of whoever\'s window it is. A board binds itself when it reads the car\'s VIN. If it cannot, it shows up here as Unbound and you assign it with one click.'),
       h('button', { class: 'btn btn-primary', onclick: addVehicle }, icon('plus'), 'Add vehicle')),
     h('section', { class: 'panel' },
       h('div', { class: 'toolbar' }, search, typeSelect, h('span', { class: 'spacer' }), seg),
@@ -50,7 +50,7 @@
           h('thead', null, h('tr', null,
             h('th', null, 'Vehicle'),
             h('th', null, 'Type'),
-            h('th', null, 'Paired driver'),
+            h('th', null, 'Paired drivers'),
             h('th', null, 'Board status'),
             h('th', null, 'Status'),
             h('th', { class: 'actions' }, h('span', { class: 'sr-only' }, 'Actions')))),
@@ -77,7 +77,7 @@
     if (typeFilter && v.vehicle_type !== typeFilter) return false;
     if (!query) return true;
     const q = query.toLowerCase();
-    return [v.plate, v.make, v.model, v.year, v.driver_name, v.node].some(x => x && String(x).toLowerCase().includes(q));
+    return [v.plate, v.make, v.model, v.year, v.node, ...(v.drivers || []).map(d => d.name)].some(x => x && String(x).toLowerCase().includes(q));
   }
 
   function render() {
@@ -186,15 +186,16 @@
 
   function row(v) {
     const st = Q.vehicleState(v);
-    const pairBtn = h('button', { class: 'btn btn-xs', type: 'button' }, v.default_driver_id ? 'Change pair' : 'Pair driver');
+    const vd = v.drivers || [];
+    const pairBtn = h('button', { class: 'btn btn-xs', type: 'button' }, vd.length ? 'Change' : 'Pair driver');
     pairBtn.addEventListener('click', () => Q.fleet.pairPicker(pairBtn, v, drivers, load));
 
-    const driverCell = v.default_driver_id
-      ? h('div', { class: 'row', style: { gap: '12px' } },
-          h('div', { class: 'grow' },
-            h('div', { class: 'cell-main' }, v.driver_name,
-              v.driver_active === 0 ? h('span', { class: 'tag warn', style: { marginLeft: '8px' } }, 'Inactive') : null),
-            h('div', { class: 'cell-sub' }, Q.fmtWindow(v.driver_shift_start, v.driver_shift_end) ? `${Q.fmtWindow(v.driver_shift_start, v.driver_shift_end)}${v.driver_shift_days ? ', ' + v.driver_shift_days : ''}` : 'No shift window')),
+    const driverCell = vd.length
+      ? h('div', { class: 'row', style: { gap: '12px', alignItems: 'flex-start' } },
+          h('div', { class: 'grow driver-stack' }, vd.map(d => h('div', null,
+            h('div', { class: 'cell-main' }, d.name,
+              d.active === 0 ? h('span', { class: 'tag warn', style: { marginLeft: '8px' } }, 'Inactive') : null),
+            h('div', { class: 'cell-sub' }, Q.fmtWindow(d.shift_start, d.shift_end) || 'No shift window')))),
           pairBtn)
       : h('div', { class: 'row', style: { gap: '12px' } },
           h('div', { class: 'grow t-warn' }, 'No driver, taps refused'),
@@ -298,7 +299,7 @@
         { name: 'year', label: 'Year', inputmode: 'numeric', placeholder: String(new Date().getFullYear()) },
         { name: 'vin', label: 'VIN (optional)', placeholder: '17 characters', hint: 'If the board can read this VIN from the car, it binds itself.' },
         {
-          name: 'default_driver_id', label: 'Paired driver', type: 'select', value: '',
+          name: 'default_driver_id', label: 'First paired driver', type: 'select', value: '', hint: 'Add more drivers later with Change.',
           options: [{ value: '', label: 'No driver yet' }].concat(activeDrivers.map(d => ({ value: d.id, label: d.name })))
         }
       ],

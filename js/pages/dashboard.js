@@ -88,7 +88,7 @@
         Q.api.get('/api/drivers'),
         Q.api.get('/api/shifts/active')
       ]);
-      const unpaired = vehicles.filter(v => !v.default_driver_id).length;
+      const unpaired = vehicles.filter(v => !(v.drivers || []).length).length;
       const unbound = vehicles.filter(v => v.board_status === 'unbound').length;
       const freeDrivers = drivers.filter(d => !d.paired_plates).length;
 

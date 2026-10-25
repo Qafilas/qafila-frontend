@@ -8,7 +8,7 @@
    Q.lineChart({
      points: [{ t: Date, v: Number }],     // sorted by time
      unit: '°C', digits: 0,
-     refs: [{ v: 90, label: '90° warning', cls: 'warn' }],
+     refs: [{ v: 105, label: '105° warning', cls: 'warn' }],
      area: true, color: 'var(--maroon)', height: 180,
      tickFormat: d => '...', tipTime: d => '...',
      yMin, yMax, group: 'shift'

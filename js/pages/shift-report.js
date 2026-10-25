@@ -136,7 +136,7 @@
             h('div', { class: 'stacked-chart' },
               h('div', { class: 't-h3' }, 'Coolant temperature, °C'),
               Q.lineChart({ points: pts('coolant'), unit: '°C', digits: 0, color: 'var(--maroon)',
-                refs: [{ v: 90, label: '90 °C warning', cls: 'warn' }, { v: 105, label: '105 °C critical', cls: 'crit' }],
+                refs: [{ v: 105, label: '105 °C warning', cls: 'warn' }, { v: 200, label: '200 °C critical', cls: 'crit', inView: false }],
                 height: 170, group: 'shift-' + s.id, tickFormat: sameDay, tipTime: sameDay, label: 'Coolant over the shift' })))
         : h('div', { class: 'panel-body' }, Q.empty('gauge', 'No readings for this shift', 'The board sends engine data every 30 seconds while the ignition is on.')));
 

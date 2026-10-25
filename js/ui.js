@@ -515,7 +515,7 @@
   function readingClass(param, v) {
     if (v === null || v === undefined || isNaN(Number(v))) return '';
     v = Number(v);
-    if (param === 'coolant') return v >= 105 ? 'crit' : v >= 90 ? 'warn' : '';
+    if (param === 'coolant') return v >= 200 ? 'crit' : v >= 105 ? 'warn' : '';
     if (param === 'voltage') return v <= 0 ? '' : v <= 12.5 ? 'crit' : v <= 13.5 ? 'warn' : '';
     if (param === 'trim') return Math.abs(v) > 15 ? 'warn' : '';
     return '';

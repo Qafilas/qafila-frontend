@@ -1,4 +1,4 @@
-/* Qafila — settings: profile, password, node health, appearance, server */
+/* Qafila — settings: profile, password, weekly prediction, node health */
 
 (function () {
   const Q = window.Qafila;
@@ -62,6 +62,47 @@
     } finally { Q.busy(pwBtn, false); }
   });
 
+  /* ---------- Weekly prediction schedule ---------- */
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const daySel = h('select', { class: 'select', 'aria-label': 'Day' }, DAYS.map((d, i) => h('option', { value: String(i) }, d)));
+  const timeIn = h('input', { class: 'input', type: 'time', step: 60, required: true, 'aria-label': 'Time' });
+  const schedNow = h('span', { class: 'field-hint' }, 'Loading the current schedule…');
+  const schedMsg = h('div', { hidden: true });
+  const schedBtn = h('button', { class: 'btn btn-primary', type: 'submit' }, 'Save schedule');
+  const schedForm = h('form', { style: { display: 'grid', gap: '16px' } },
+    h('p', { class: 't-muted', style: { margin: 0 } },
+      'Qafila checks every vehicle once a week for slow trends that lead to a fault. Pick a quiet time, when most of your vehicles are parked and their last readings have been uploaded.'),
+    h('div', { class: 'form-grid' },
+      h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'Day'), daySel),
+      h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'Time'), timeIn)),
+    schedNow,
+    schedMsg,
+    h('div', null, schedBtn));
+
+  function showSchedule(s) {
+    daySel.value = String(s.day);
+    timeIn.value = s.time;
+    schedNow.textContent = `Now: ${s.label}, ${s.timezone} time.`;
+  }
+
+  async function loadSchedule() {
+    try { showSchedule(await Q.api.get('/api/predictions/schedule')); }
+    catch (err) { schedNow.textContent = 'Could not load the schedule: ' + err.message; }
+  }
+
+  schedForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!timeIn.value) return showMsg(schedMsg, 'err', 'Choose a time.');
+    Q.busy(schedBtn, true, 'Saving');
+    try {
+      const s = await Q.api.put('/api/predictions/schedule', { day: Number(daySel.value), time: timeIn.value });
+      showSchedule(s);
+      showMsg(schedMsg, 'ok', `Saved. The weekly check now runs ${s.label.replace(/^Every/, 'every')}.`);
+    } catch (err) {
+      showMsg(schedMsg, 'err', err.message);
+    } finally { Q.busy(schedBtn, false); }
+  });
+
   function showMsg(el, kind, text) {
     el.className = kind === 'ok' ? 'form-ok' : 'form-error';
     el.textContent = text;
@@ -120,6 +161,9 @@
       h('section', { class: 'panel' },
         h('div', { class: 'panel-head' }, h('h2', { class: 't-h2' }, 'Password')),
         h('div', { class: 'panel-body' }, pwForm))),
+    h('section', { class: 'panel', id: 'prediction-schedule' },
+      h('div', { class: 'panel-head' }, h('h2', { class: 't-h2' }, 'Weekly prediction')),
+      h('div', { class: 'panel-body' }, schedForm)),
     h('section', { class: 'panel' },
       h('div', { class: 'panel-head' },
         h('h2', { class: 't-h2' }, 'Node health', h('div', null, nodesNote)),
@@ -132,5 +176,6 @@
           nodesBody))));
 
   loadNodes();
+  loadSchedule();
   Q.on('node', Q.debounce(loadNodes, 500));
 })();

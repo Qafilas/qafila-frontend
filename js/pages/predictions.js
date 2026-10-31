@@ -24,11 +24,17 @@
         }
       }, l)));
 
+  /* day and time of the weekly check, chosen in Settings */
+  const schedText = h('span', null, 'Every Thursday at 10:00 PM');
+  Q.api.get('/api/predictions/schedule').then(s => { if (s && s.label) schedText.textContent = s.label; }).catch(() => {});
+
   const runBtn = h('button', { class: 'btn btn-sm', onclick: runNow }, icon('refresh'), 'Run check now');
 
   mount($('#page'),
     h('p', { class: 'page-lede' },
-      'Every Thursday at 10:00 PM, Qafila averages each vehicle\'s readings week by week and fits a straight-line trend over the last four weeks. When a trend moves toward a fault faster than its limit, it lands here, weeks before a breakdown.'),
+      schedText,
+      ', Qafila averages each vehicle\'s readings week by week and fits a straight-line trend over the last four weeks. When a trend moves toward a fault faster than its limit, it lands here, weeks before a breakdown. ',
+      h('a', { href: Q.pagePath('settings') + '#prediction-schedule' }, 'Change the day and time')),
     h('section', { class: 'panel', id: 'trends' },
       h('div', { class: 'panel-head' },
         h('h2', { class: 't-h2' }, 'Weekly trends'),

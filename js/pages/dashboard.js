@@ -193,9 +193,10 @@
   /* ---------- Predictions ---------- */
   async function loadPredictions() {
     try {
-      const [preds, gasket] = await Promise.all([
+      const [preds, gasket, sched] = await Promise.all([
         Q.api.get('/api/predictions?resolved=0&limit=20'),
-        Q.api.get('/api/gasket/status').catch(() => [])
+        Q.api.get('/api/gasket/status').catch(() => []),
+        Q.api.get('/api/predictions/schedule').catch(() => null)
       ]);
       const rows = [];
 
@@ -219,7 +220,7 @@
       });
 
       mount(predBody, rows.length ? rows : Q.empty('predictions', 'No trends to act on',
-        'Every Thursday at 10:00 PM, Qafila fits a four-week trend to each vehicle. Anything drifting toward a fault shows up here.'));
+        `${(sched && sched.label) || 'Every Thursday at 10:00 PM'}, Qafila fits a four-week trend to each vehicle. Anything drifting toward a fault shows up here.`));
     } catch (err) {
       mount(predBody, Q.errorBox(err, loadPredictions));
     }

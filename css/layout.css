@@ -259,7 +259,7 @@
   flex-wrap: wrap;
 }
 
-.page-lede { max-width: 64ch; color: var(--ink-2); }
+.page-lede { max-width: none; color: var(--ink-2); }
 
 .cols-2 {
   display: grid;

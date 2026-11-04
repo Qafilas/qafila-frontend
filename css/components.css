@@ -237,6 +237,28 @@
 }
 .toolbar .spacer { flex: 1 1 auto; }
 
+/* ---------- Bulk selection ---------- */
+.bulk-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 20px; background: var(--maroon-soft); color: var(--maroon-text);
+  border-bottom: 1px solid var(--line);
+}
+.bulk-bar[hidden] { display: none; }
+.bulk-bar .spacer { flex: 1 1 auto; }
+.table .check-col { width: 36px; padding-right: 0; }
+.check { width: 16px; height: 16px; accent-color: var(--maroon); cursor: pointer; vertical-align: middle; }
+.choices { display: grid; gap: 8px; margin: 12px 0; }
+.choice {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px;
+  border: 1px solid var(--line-strong); border-radius: var(--r-md); cursor: pointer;
+}
+.choice:has(input:checked) { border-color: var(--maroon); background: var(--maroon-soft); }
+.choice input { margin-top: 3px; accent-color: var(--maroon); }
+.choice > span { display: grid; gap: 2px; }
+.danger-zone { border: 1px solid var(--signal-soft); border-radius: var(--r-md); padding: 14px 16px; }
+.preview-table td.err { color: var(--signal-text); }
+.preview-table tr.bad { background: var(--signal-soft); }
+
 /* ---------- Tables ---------- */
 .table-wrap { overflow-x: auto; }
 
@@ -627,3 +649,7 @@
 }
 .popover-item.selected .pick-box { background: var(--maroon); border-color: var(--maroon); }
 .pick-box .ic { width: 12px; height: 12px; }
+
+/* Head-gasket symptom tags carry a sentence; let them wrap on phones */
+.flags { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.flags .tag { height: auto; min-height: 22px; padding: 3px 8px; line-height: 1.35; white-space: normal; max-width: 100%; }

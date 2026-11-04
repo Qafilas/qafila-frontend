@@ -14,6 +14,8 @@
   let editingId = null;
 
   const tbody = h('tbody');
+  const sel = Q.bulkSelect({ noun: 'vehicle', onDelete: bulkRemove });
+  const headRow = h('tr');
   const counts = { active: h('span', { class: 'seg-n' }), inactive: h('span', { class: 'seg-n' }), all: h('span', { class: 'seg-n' }) };
 
   const seg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Status' },
@@ -45,18 +47,24 @@
       h('button', { class: 'btn btn-primary', onclick: addVehicle }, icon('plus'), 'Add vehicle')),
     h('section', { class: 'panel' },
       h('div', { class: 'toolbar' }, search, typeSelect, h('span', { class: 'spacer' }), seg),
+      sel.bar,
       h('div', { class: 'table-wrap' },
         h('table', { class: 'table' },
-          h('thead', null, h('tr', null,
-            h('th', null, 'Vehicle'),
-            h('th', null, 'Type'),
-            h('th', null, 'Paired drivers'),
-            h('th', null, 'Board status'),
-            h('th', null, 'Status'),
-            h('th', { class: 'actions' }, h('span', { class: 'sr-only' }, 'Actions')))),
+          h('thead', null, headRow),
           tbody))));
 
-  mount(tbody, Q.loadingRows(6));
+  function renderHead(ids) {
+    mount(headRow,
+      sel.headCell(ids),
+      h('th', null, 'Vehicle'),
+      h('th', null, 'Type'),
+      h('th', null, 'Paired drivers'),
+      h('th', null, 'Board status'),
+      h('th', null, 'Status'),
+      h('th', { class: 'actions' }, h('span', { class: 'sr-only' }, 'Actions')));
+  }
+  renderHead([]);
+  mount(tbody, Q.loadingRows(7));
 
   async function load() {
     try {
@@ -65,9 +73,10 @@
         Q.api.get('/api/drivers?all=1'),
         Q.api.get('/api/nodes/unbound').catch(() => [])
       ]);
+      sel.prune(vehicles.map(v => v.id));
       render();
     } catch (err) {
-      mount(tbody, h('tr', null, h('td', { colspan: 6 }, Q.errorBox(err, load))));
+      mount(tbody, h('tr', null, h('td', { colspan: 7 }, Q.errorBox(err, load))));
     }
   }
 
@@ -86,8 +95,9 @@
     counts.all.textContent = vehicles.length;
 
     const list = vehicles.filter(matches);
+    renderHead(list.map(v => v.id));
     if (!list.length) {
-      mount(tbody, h('tr', null, h('td', { colspan: 6 },
+      mount(tbody, h('tr', null, h('td', { colspan: 7 },
         vehicles.length
           ? Q.empty('search', 'No vehicles match', 'Try another plate or clear the filters.')
           : Q.empty('vehicles', 'No vehicles yet', 'Add a vehicle, or import your fleet from a CSV file. Each CSV row pairs a driver with a vehicle.',
@@ -202,6 +212,7 @@
           pairBtn);
 
     return h('tr', { class: v.active ? '' : 'is-inactive' },
+      sel.cell(v.id, v.plate),
       h('td', null,
         h('a', { class: 'row vehicle-link', style: { gap: '12px' }, href: Q.pagePath('vehicle') + '?id=' + v.id, title: 'Open vehicle details' },
           Q.plate(v.plate),
@@ -240,6 +251,7 @@
     const save = h('button', { class: 'btn btn-primary btn-xs', onclick: () => saveEdit(v, f, save) }, 'Save');
 
     const tr = h('tr', { class: 'editing' },
+      h('td', { class: 'check-col' }),
       h('td', null,
         h('div', { style: { display: 'grid', gap: '6px', gridTemplateColumns: 'auto 1fr' } },
           f.plate, f.year,
@@ -373,6 +385,35 @@
         await Q.api.del(`/api/vehicles/${v.id}?force=1`);
         Q.toast({ title: `${v.plate} deleted` });
       }
+      await load();
+    } catch (err) {
+      Q.toast({ level: 'crit', title: 'Could not delete', text: err.message });
+    }
+  }
+
+  /* ---------- Delete several ---------- */
+  async function bulkRemove(ids) {
+    if (!ids.length) return;
+    let c;
+    try { c = await Q.api.post('/api/vehicles/bulk-delete?dry_run=1', { ids }); }
+    catch (err) { Q.toast({ level: 'crit', title: 'Could not check', text: err.message }); return; }
+    const plates = vehicles.filter(v => ids.includes(v.id)).map(v => v.plate);
+    const shown = plates.slice(0, 6).join(', ') + (plates.length > 6 ? ` and ${plates.length - 6} more` : '');
+    const s = n => n === 1 ? '' : 's';
+    const choice = await Q.bulkDeleteDialog({
+      title: `Delete ${c.vehicles} vehicle${s(c.vehicles)}?`,
+      lines: [shown,
+        (c.shifts ? `They have ${c.shifts} recorded shift${s(c.shifts)}. Any shift still open is ended. ` : 'They have no shifts on record. ') +
+        (c.boards ? `${c.boards} board${s(c.boards)} will be released and show as Unbound, ready to assign to another vehicle.` : 'No boards are assigned to them.')],
+      keepText: 'Shifts, readings and driver reports stay in the history, shown without the plate.',
+      deleteText: `Also delete their ${c.shifts} shift${s(c.shifts)} with every reading, alert, prediction and behaviour report.`
+    });
+    if (!choice) return;
+    try {
+      const r = await Q.api.post('/api/vehicles/bulk-delete', { ids, history: choice });
+      sel.clear();
+      Q.toast({ title: `${r.deleted} vehicle${s(r.deleted)} deleted`,
+        text: r.boards ? `${r.boards} board${s(r.boards)} released.` : null });
       await load();
     } catch (err) {
       Q.toast({ level: 'crit', title: 'Could not delete', text: err.message });

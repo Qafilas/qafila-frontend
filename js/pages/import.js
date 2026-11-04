@@ -15,6 +15,7 @@
   const fileName = h('span', { class: 't-muted' }, 'No file chosen');
   const importBtn = h('button', { class: 'btn btn-primary', type: 'button', disabled: true }, icon('upload'), 'Import');
   const result = h('div', { class: 'import-result' });
+  const preview = h('div', { class: 'import-preview' });
 
   chooseBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
 
@@ -70,7 +71,8 @@
         h('p', { class: 't-muted', style: { marginTop: '6px', maxWidth: '60ch' } },
           'Upload your fleet spreadsheet as a CSV file. Each row pairs a driver with a vehicle. See below for the columns it needs.'),
         h('div', { class: 'import-picker' }, fileInput, chooseBtn, fileName, importBtn),
-        result)),
+        result),
+      preview),
     guide);
 
   /* ---------- CSV parsing ---------- */
@@ -101,8 +103,10 @@
   fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
     mount(result);
+    mount(preview);
     rows = [];
     importBtn.disabled = true;
+    importBtn.lastChild.textContent = 'Import';
     if (!file) { fileName.textContent = 'No file chosen'; return; }
 
     fileName.textContent = file.name;
@@ -129,17 +133,69 @@
         return o;
       });
       fileName.textContent = `${file.name}, ${rows.length} row${rows.length === 1 ? '' : 's'}`;
-      importBtn.disabled = false;
-      importBtn.focus();
+      runPreview(file.name);
     };
     reader.readAsText(file);
   });
+
+  /* ---------- Preview: the server checks every row without saving ---------- */
+  const WORD = { created: ['New', 'ok'], updated: ['Updated', 'duty'], unchanged: ['No change', ''], set: ['New pairing', 'ok'] };
+  const tagFor = v => v && WORD[v] ? h('span', { class: 'tag ' + WORD[v][1] }, WORD[v][0]) : h('span', { class: 't-faint' }, '—');
+
+  async function runPreview(name) {
+    mount(preview, h('div', { class: 'panel-body t-muted' }, h('span', { class: 'spin' }), ' Checking every row…'));
+    let r;
+    try { r = await Q.api.post('/api/import?dry_run=1', { rows }); }
+    catch (err) { mount(preview, h('div', { class: 'panel-body' }, h('div', { class: 'form-error' }, err.message))); return; }
+
+    const notes = {};
+    (r.warnings || []).forEach(w => { const m = /^Row (\d+):\s*(.*)$/.exec(w); if (m) (notes[m[1]] = notes[m[1]] || []).push(m[2]); });
+    const bad = r.rows.filter(x => x.error).length;
+    const good = r.rows.length - bad;
+    const parts = [];
+    if (r.driversCreated) parts.push(`${r.driversCreated} new driver${r.driversCreated === 1 ? '' : 's'}`);
+    if (r.driversUpdated) parts.push(`${r.driversUpdated} driver${r.driversUpdated === 1 ? '' : 's'} updated`);
+    if (r.vehiclesCreated) parts.push(`${r.vehiclesCreated} new vehicle${r.vehiclesCreated === 1 ? '' : 's'}`);
+    if (r.vehiclesUpdated) parts.push(`${r.vehiclesUpdated} vehicle${r.vehiclesUpdated === 1 ? '' : 's'} updated`);
+    if (r.pairsSet) parts.push(`${r.pairsSet} new pairing${r.pairsSet === 1 ? '' : 's'}`);
+
+    mount(preview,
+      h('div', { class: 'panel-head', style: { borderTop: '1px solid var(--line)' } },
+        h('h2', { class: 't-h2' }, 'Preview, nothing saved yet',
+          h('div', { class: 'panel-sub' },
+            (parts.length ? parts.join(', ') : 'No changes') + '. ' +
+            (bad ? `${bad} row${bad === 1 ? '' : 's'} will be skipped.` : 'Every row can be imported.')))),
+      h('div', { class: 'table-wrap' },
+        h('table', { class: 'table preview-table' },
+          h('thead', null, h('tr', null,
+            h('th', { class: 'num' }, 'Row'), h('th', null, 'Driver'), h('th', null, 'Vehicle'),
+            h('th', null, 'Driver change'), h('th', null, 'Vehicle change'), h('th', null, 'Pairing'), h('th', null, 'Notes'))),
+          h('tbody', null, r.rows.map(x => {
+            const src = rows[x.row - 2] || {};
+            const n = notes[x.row] || [];
+            return h('tr', { class: x.error ? 'bad' : '' },
+              h('td', { class: 'num' }, String(x.row)),
+              h('td', null, h('div', { class: 'cell-main' }, src.name || '—'), h('div', { class: 'cell-sub' }, src.employee_id || '')),
+              h('td', null, src.plate ? Q.plate(src.plate, 'sm') : h('span', { class: 't-faint' }, '—')),
+              x.error ? h('td', { colspan: 3, class: 'err' }, h('strong', null, 'Skipped: '), x.error) : [h('td', null, tagFor(x.driver)), h('td', null, tagFor(x.vehicle)), h('td', null, tagFor(x.pair))],
+              h('td', { class: 'cell-sub' }, n.length ? n.join('; ') : ''));
+          })))));
+
+    if (good) {
+      importBtn.disabled = false;
+      importBtn.lastChild.textContent = `Import ${good} row${good === 1 ? '' : 's'}`;
+      importBtn.focus();
+    } else {
+      mount(result, h('div', { class: 'form-error' }, `No row in ${name} can be imported. Fix the rows marked Skipped and choose the file again.`));
+    }
+  }
 
   /* ---------- Import ---------- */
   importBtn.addEventListener('click', async () => {
     if (!rows.length) return;
     Q.busy(importBtn, true, 'Importing');
     mount(result);
+    mount(preview);
     try {
       const r = await Q.api.post('/api/import', { rows });
       const updated = r.driversUpdated + r.vehiclesUpdated;
@@ -167,6 +223,7 @@
       fileName.textContent = 'No file chosen';
       Q.busy(importBtn, false);
       importBtn.disabled = true;
+      importBtn.lastChild.textContent = 'Import';
     } catch (err) {
       Q.busy(importBtn, false);
       mount(result, h('div', { class: 'form-error' }, err.message));

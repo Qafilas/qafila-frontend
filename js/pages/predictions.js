@@ -145,7 +145,7 @@
       const flagged = rows.filter(r => r.status !== 'clear');
       const clear = rows.length - flagged.length;
 
-      gasketNote.textContent = 'Two or more different symptoms within 24 hours make a vehicle a suspect: coolant spike, misfire code, P0118, P0171 or fuel trim drift.';
+      gasketNote.textContent = 'Two or more different symptoms within 24 hours make a vehicle a suspect: a misfire code (P0300–P0308), coolant sensor code P0118, lean code P0171, or fuel trim beyond ±15 % with a warm engine.';
 
       mount(gasketBody,
         flagged.length ? flagged.map(g => h('div', { class: 'gasket-row' },
@@ -158,7 +158,7 @@
             h('div', { class: 'flags' }, g.flags.map(f => h('span', { class: 'tag ' + (f.level === 'crit' ? 'crit' : 'warn'), title: f.message }, f.label || f.parameter))),
             g.recommendation ? h('div', { class: 'pred-msg' }, g.recommendation) : null),
           h('span', { class: 'tag ' + (g.status === 'suspect' ? 'crit' : 'warn') }, g.status === 'suspect' ? 'Inspect' : 'Watch')))
-          : Q.empty('check', 'No gasket symptoms', 'No vehicle has shown a coolant spike, misfire code or fuel trim drift in the last 24 hours.'),
+          : Q.empty('check', 'No gasket symptoms', 'No vehicle has shown a misfire code, P0118, P0171 or fuel trim drift in the last 24 hours.'),
         clear && flagged.length ? h('div', { class: 'panel-foot', style: { justifyContent: 'flex-start' } },
           h('span', { class: 'cell-sub' }, `${clear} other vehicle${clear === 1 ? ' is' : 's are'} clear.`)) : null);
     } catch (err) {

@@ -515,8 +515,8 @@
   function readingClass(param, v) {
     if (v === null || v === undefined || isNaN(Number(v))) return '';
     v = Number(v);
-    if (param === 'coolant') return v >= 200 ? 'crit' : v >= 105 ? 'warn' : '';
-    if (param === 'voltage') return v <= 0 ? '' : v <= 12.5 ? 'crit' : v <= 13.5 ? 'warn' : '';
+    if (param === 'coolant') return v >= 115 ? 'crit' : v >= 105 ? 'warn' : '';
+    if (param === 'voltage') return v <= 0 ? '' : v < 13.0 ? 'crit' : v <= 13.5 ? 'warn' : '';
     if (param === 'trim') return Math.abs(v) > 15 ? 'warn' : '';
     return '';
   }
@@ -539,6 +539,83 @@
     return String(a.value);
   }
 
+
+  /* ---------- Bulk selection for list pages ----------
+     sel = bulkSelect({ noun: 'driver', onDelete: ids => ... })
+     sel.headCell(visibleIds) / sel.cell(id) build the checkbox cells;
+     sel.bar is the "N selected · Delete selected · Cancel" strip. */
+  function bulkSelect({ noun, onDelete, onChange }) {
+    const ids = new Set();
+    let visible = [];
+    const n = h('strong');
+    const del = h('button', { class: 'btn btn-sm btn-danger-solid', onclick: () => onDelete([...ids]) }, icon('x'), 'Delete selected');
+    const bar = h('div', { class: 'bulk-bar', hidden: true, role: 'region', 'aria-label': 'Selection' },
+      n, h('span', { class: 'spacer' }),
+      del, h('button', { class: 'btn btn-sm', onclick: () => api.clear() }, 'Cancel'));
+    let head = null;
+
+    function sync() {
+      bar.hidden = ids.size === 0;
+      n.textContent = `${ids.size} ${noun}${ids.size === 1 ? '' : 's'} selected`;
+      if (head) {
+        const on = visible.filter(i => ids.has(i)).length;
+        head.checked = visible.length > 0 && on === visible.length;
+        head.indeterminate = on > 0 && on < visible.length;
+      }
+      if (onChange) onChange();
+    }
+    const api = {
+      bar, ids,
+      has: id => ids.has(id),
+      clear() { ids.clear(); document.querySelectorAll('.bulk-check').forEach(c => { c.checked = false; }); sync(); },
+      prune(existing) { const keep = new Set(existing); [...ids].forEach(i => { if (!keep.has(i)) ids.delete(i); }); sync(); },
+      headCell(list) {
+        visible = list;
+        head = h('input', {
+          type: 'checkbox', class: 'check', 'aria-label': `Select all ${noun}s shown`,
+          onchange: e => {
+            visible.forEach(i => e.target.checked ? ids.add(i) : ids.delete(i));
+            document.querySelectorAll('.bulk-check').forEach(c => { c.checked = ids.has(Number(c.value)); });
+            sync();
+          }
+        });
+        setTimeout(sync, 0);
+        return h('th', { class: 'check-col' }, head);
+      },
+      cell(id, label) {
+        return h('td', { class: 'check-col' }, h('input', {
+          type: 'checkbox', class: 'check bulk-check', value: id, checked: ids.has(id) ? true : null,
+          'aria-label': `Select ${label}`,
+          onchange: e => { e.target.checked ? ids.add(id) : ids.delete(id); sync(); }
+        }));
+      }
+    };
+    return api;
+  }
+
+  /* Dialog for deleting several records: shows the dry-run counts and asks
+     whether to keep the history. Resolves to 'keep', 'delete' or undefined. */
+  function bulkDeleteDialog({ title, lines, keepText, deleteText }) {
+    return dialog(close => {
+      let choice = 'keep';
+      const opt = (value, label, text) => h('label', { class: 'choice' },
+        h('input', { type: 'radio', name: 'bulk-history', value, checked: value === 'keep' ? true : null, onchange: () => { choice = value; go.textContent = value === 'keep' ? 'Delete, keep history' : 'Delete everything'; } }),
+        h('span', null, h('strong', null, label), h('span', { class: 'cell-sub' }, text)));
+      const go = h('button', { class: 'btn btn-danger-solid', onclick: () => close(choice) }, 'Delete, keep history');
+      return [
+        h('div', { class: 'dialog-head' }, h('h2', { class: 't-h2' }, title)),
+        h('div', { class: 'dialog-body' },
+          lines.map(l => h('p', null, l)),
+          h('div', { class: 'choices' },
+            opt('keep', 'Keep history', keepText),
+            opt('delete', 'Delete everything', deleteText)),
+          h('p', { class: 'cell-sub' }, 'This cannot be undone.')),
+        h('div', { class: 'dialog-foot' },
+          h('button', { class: 'btn', onclick: () => close() }, 'Cancel'), go)
+      ];
+    });
+  }
+
   Object.assign(Q, {
     readingClass, STREAM_LABEL, STREAM_UNIT, alertValue,
     h, append, clear, mount, $, $$, icon,
@@ -547,6 +624,6 @@
     plate, led, stateBadge, vehicleState, levelClass, scoreDial, STATE,
     empty, loadingRows, errorBox, toast, dialog, confirm, formDialog,
     popover, closePopover, spark, debounce, busy, downloadText, qs, pagePath,
-    VEHICLE_TYPES, typeLabel
+    VEHICLE_TYPES, typeLabel, bulkSelect, bulkDeleteDialog
   });
 })();

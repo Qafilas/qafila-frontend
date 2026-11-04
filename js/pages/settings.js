@@ -152,6 +152,65 @@
     }
   }
 
+  /* ---------- Fleet data: export and start over ---------- */
+  const exportBtn = h('button', { class: 'btn', type: 'button', onclick: exportFleet }, icon('download'), 'Export fleet (CSV)');
+  const resetBtn = h('button', { class: 'btn btn-danger-solid', type: 'button', onclick: startOver }, 'Start over');
+  const fleetPanel = h('div', { style: { display: 'grid', gap: '18px' } },
+    h('div', null,
+      h('p', { class: 't-muted', style: { margin: '0 0 10px' } },
+        'Download every driver, vehicle, pairing and shift window as a CSV file in the same format the Import page reads, so you can keep a copy or bring the fleet back later.'),
+      exportBtn),
+    h('div', { class: 'danger-zone' },
+      h('h3', { class: 't-h3', style: { margin: '0 0 6px' } }, 'Start over'),
+      h('p', { class: 't-muted', style: { margin: '0 0 10px' } },
+        'Removes all drivers, vehicles, pairings, cards, shifts, readings, alerts, reports and predictions. Your account, the prediction schedule and the boards stay; the boards wait to be assigned again.'),
+      resetBtn));
+
+  async function exportFleet() {
+    Q.busy(exportBtn, true, 'Preparing');
+    try {
+      const text = await Q.api.get('/api/fleet/export.csv');
+      const csv = String(text || '').replace(/^﻿/, '');
+      const lines = csv.trim() ? csv.trim().split(/\r?\n/).length - 1 : 0;
+      Q.downloadText(`qafila-fleet-${new Date().toISOString().slice(0, 10)}.csv`, '﻿' + csv);
+      Q.toast({ title: 'Fleet exported', text: `${lines} row${lines === 1 ? '' : 's'} saved to your downloads.` });
+    } catch (err) {
+      Q.toast({ level: 'crit', title: 'Could not export', text: err.message });
+    } finally { Q.busy(exportBtn, false); }
+  }
+
+  async function startOver() {
+    let nd = '?', nv = '?';
+    try {
+      const [d, v] = await Promise.all([Q.api.get('/api/drivers?all=1'), Q.api.get('/api/vehicles?all=1')]);
+      nd = (d || []).length; nv = (v || []).length;
+    } catch (_) {}
+    const ok = await Q.dialog(close => {
+      const typed = h('input', { class: 'input', autocomplete: 'off', spellcheck: 'false', placeholder: 'DELETE', 'aria-label': 'Type DELETE to confirm',
+        oninput: e => { go.disabled = e.target.value.trim() !== 'DELETE'; } });
+      const go = h('button', { class: 'btn btn-danger-solid', disabled: true, onclick: () => close(true) }, 'Delete all fleet data');
+      typed.addEventListener('keydown', e => { if (e.key === 'Enter' && !go.disabled) close(true); });
+      return [
+        h('div', { class: 'dialog-head' }, h('h2', { class: 't-h2' }, 'Start over?')),
+        h('div', { class: 'dialog-body' },
+          h('p', null, `This deletes ${nd} driver${nd === 1 ? '' : 's'} and ${nv} vehicle${nv === 1 ? '' : 's'}, with every shift, reading, alert, report and prediction. It cannot be undone.`),
+          h('p', null, 'Export the fleet first if you may want it back.'),
+          h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'Type DELETE to confirm'), typed)),
+        h('div', { class: 'dialog-foot' },
+          h('button', { class: 'btn', onclick: () => close(false) }, 'Cancel'), go)
+      ];
+    });
+    if (!ok) return;
+    Q.busy(resetBtn, true, 'Deleting');
+    try {
+      await Q.api.post('/api/fleet/reset', { confirm: 'DELETE' });
+      Q.toast({ title: 'Fleet data deleted', text: 'Add drivers and vehicles again, or import a CSV file.' });
+      loadNodes();
+    } catch (err) {
+      Q.toast({ level: 'crit', title: 'Could not delete', text: err.message });
+    } finally { Q.busy(resetBtn, false); }
+  }
+
   /* ---------- Layout ---------- */
   mount($('#page'),
     h('div', { class: 'cols-even' },
@@ -173,7 +232,10 @@
           h('thead', null, h('tr', null,
             h('th', null, 'Board'), h('th', null, 'Vehicle'), h('th', null, 'Status'),
             h('th', null, 'Last seen'), h('th', null, 'Cellular'), h('th', { class: 'num' }, 'Uploads, 24 h'))),
-          nodesBody))));
+          nodesBody))),
+    h('section', { class: 'panel', id: 'fleet-data' },
+      h('div', { class: 'panel-head' }, h('h2', { class: 't-h2' }, 'Fleet data')),
+      h('div', { class: 'panel-body' }, fleetPanel)));
 
   loadNodes();
   loadSchedule();

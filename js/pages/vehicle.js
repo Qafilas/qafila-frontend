@@ -20,9 +20,9 @@
   /* The five streams the weekly prediction watches (load/speed shown in the list only) */
   const STREAMS = [
     { key: 'coolant', title: 'Coolant temperature', unit: '°C', digits: 1,
-      refs: [{ v: 105, label: '105 °C warning', cls: 'warn' }, { v: 200, label: '200 °C critical', cls: 'crit', inView: false }] },
+      refs: [{ v: 105, label: '105 °C warning', cls: 'warn' }, { v: 115, label: '115 °C critical', cls: 'crit' }] },
     { key: 'voltage', title: 'Battery voltage', unit: 'V', digits: 2,
-      refs: [{ v: 13.5, label: '13.5 V warning', cls: 'warn' }, { v: 12.5, label: '12.5 V critical', cls: 'crit' }] },
+      refs: [{ v: 13.5, label: '13.5 V warning', cls: 'warn' }, { v: 13.0, label: '13.0 V critical', cls: 'crit' }] },
     { key: 'ltft', title: 'Long-term fuel trim', unit: '%', digits: 1,
       refs: [{ v: 15, label: '+15% warning', cls: 'warn' }] },
     { key: 'stft', title: 'Short-term fuel trim', unit: '%', digits: 1,

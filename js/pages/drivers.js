@@ -11,6 +11,8 @@
   let editingId = null;
 
   const tbody = h('tbody');
+  const sel = Q.bulkSelect({ noun: 'driver', onDelete: bulkRemove });
+  const headRow = h('tr');
   const counts = { active: h('span', { class: 'seg-n' }), inactive: h('span', { class: 'seg-n' }), all: h('span', { class: 'seg-n' }) };
 
   const seg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Status' },
@@ -38,26 +40,33 @@
       h('button', { class: 'btn btn-primary', onclick: addDriver }, icon('plus'), 'Add driver')),
     h('section', { class: 'panel' },
       h('div', { class: 'toolbar' }, search, h('span', { class: 'spacer' }), seg),
+      sel.bar,
       h('div', { class: 'table-wrap' },
         h('table', { class: 'table' },
-          h('thead', null, h('tr', null,
-            h('th', null, 'Driver'),
-            h('th', null, 'Phone and licence'),
-            h('th', null, 'Shift window'),
-            h('th', null, 'Paired vehicle'),
-            h('th', { class: 'num' }, 'Avg score'),
-            h('th', null, 'Status'),
-            h('th', { class: 'actions' }, h('span', { class: 'sr-only' }, 'Actions')))),
+          h('thead', null, headRow),
           tbody))));
 
-  mount(tbody, Q.loadingRows(7));
+  function renderHead(ids) {
+    mount(headRow,
+      sel.headCell(ids),
+      h('th', null, 'Driver'),
+      h('th', null, 'Phone and licence'),
+      h('th', null, 'Shift window'),
+      h('th', null, 'Paired vehicle'),
+      h('th', { class: 'num' }, 'Avg score'),
+      h('th', null, 'Status'),
+      h('th', { class: 'actions' }, h('span', { class: 'sr-only' }, 'Actions')));
+  }
+  renderHead([]);
+  mount(tbody, Q.loadingRows(8));
 
   async function load() {
     try {
       drivers = await Q.api.get('/api/drivers?all=1') || [];
+      sel.prune(drivers.map(d => d.id));
       render();
     } catch (err) {
-      mount(tbody, h('tr', null, h('td', { colspan: 7 }, Q.errorBox(err, load))));
+      mount(tbody, h('tr', null, h('td', { colspan: 8 }, Q.errorBox(err, load))));
     }
   }
 
@@ -75,8 +84,9 @@
     counts.all.textContent = drivers.length;
 
     const list = drivers.filter(matches);
+    renderHead(list.map(d => d.id));
     if (!list.length) {
-      mount(tbody, h('tr', null, h('td', { colspan: 7 },
+      mount(tbody, h('tr', null, h('td', { colspan: 8 },
         drivers.length
           ? Q.empty('search', 'No drivers match', 'Try another name or switch the status filter.')
           : Q.empty('drivers', 'No drivers yet', 'Add drivers one by one, or import your whole fleet from a CSV file.',
@@ -104,6 +114,7 @@
       : h('span', { class: 'tag ok' }, 'Active');
 
     return h('tr', { class: d.active ? '' : 'is-inactive' },
+      sel.cell(d.id, d.name),
       h('td', null,
         h('a', { class: 'cell-main', href: Q.pagePath('shifts') + '?driver=' + d.id, style: { color: 'inherit' } }, d.name),
         h('div', { class: 'cell-sub' }, d.employee_id)),
@@ -133,6 +144,7 @@
 
     const save = h('button', { class: 'btn btn-primary btn-xs', onclick: () => saveEdit(d, f, save) }, 'Save');
     const tr = h('tr', { class: 'editing' },
+      h('td', { class: 'check-col' }),
       h('td', null, input('name', d.name), h('div', { class: 'cell-sub', style: { marginTop: '4px' } }, d.employee_id)),
       h('td', null,
         h('div', { style: { display: 'grid', gap: '6px' } },
@@ -253,6 +265,34 @@
         await Q.api.del(`/api/drivers/${d.id}?force=1`);
         Q.toast({ title: `${d.name} deleted` });
       }
+      await load();
+    } catch (err) {
+      Q.toast({ level: 'crit', title: 'Could not delete', text: err.message });
+    }
+  }
+
+  /* ---------- Delete several ---------- */
+  async function bulkRemove(ids) {
+    if (!ids.length) return;
+    let c;
+    try { c = await Q.api.post('/api/drivers/bulk-delete?dry_run=1', { ids }); }
+    catch (err) { Q.toast({ level: 'crit', title: 'Could not check', text: err.message }); return; }
+    const names = drivers.filter(d => ids.includes(d.id)).map(d => d.name);
+    const shown = names.slice(0, 5).join(', ') + (names.length > 5 ? ` and ${names.length - 5} more` : '');
+    const choice = await Q.bulkDeleteDialog({
+      title: `Delete ${c.drivers} driver${c.drivers === 1 ? '' : 's'}?`,
+      lines: [shown, c.shifts
+        ? `They have ${c.shifts} recorded shift${c.shifts === 1 ? '' : 's'}. Any shift still open is ended, their cards stop working and their vehicles are unpaired.`
+        : 'They have no shifts on record. Their cards stop working and their vehicles are unpaired.'],
+      keepText: 'Shifts, readings and alerts stay in the reports without the driver\'s name.',
+      deleteText: `Also delete their ${c.shifts} shift${c.shifts === 1 ? '' : 's'}, with the readings, alerts and behaviour reports recorded in them.`
+    });
+    if (!choice) return;
+    try {
+      const r = await Q.api.post('/api/drivers/bulk-delete', { ids, history: choice });
+      sel.clear();
+      Q.toast({ title: `${r.deleted} driver${r.deleted === 1 ? '' : 's'} deleted`,
+        text: choice === 'delete' && r.shifts ? `${r.shifts} shift${r.shifts === 1 ? '' : 's'} deleted with them.` : null });
       await load();
     } catch (err) {
       Q.toast({ level: 'crit', title: 'Could not delete', text: err.message });

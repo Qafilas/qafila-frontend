@@ -165,7 +165,7 @@
               a.message,
               a.type === 'gasket' ? h('span', { class: 'tag', style: { marginLeft: '8px' } }, 'Gasket') : null,
               a.resolved ? h('span', { class: 'tag ok', style: { marginLeft: '8px' } }, 'Resolved') : null))))
-        : h('div', { class: 'panel-body' }, Q.empty('check', 'No alerts', 'Coolant, battery and fuel trim stayed inside safe limits.')));
+        : h('div', { class: 'panel-body' }, Q.empty('check', 'No alerts', 'Coolant and fuel trim stayed inside safe limits.')));
 
     /* 5. Predictions for this vehicle */
     const predPanel = h('section', { class: 'panel' },

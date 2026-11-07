@@ -35,7 +35,7 @@
   const levelSeg = seg('level', [['', 'Any level'], ['red', 'Critical'], ['yellow', 'Warning']], 'Level');
   const typeSel = h('select', { class: 'select select-sm', 'aria-label': 'Type', style: { width: 'auto' } },
     h('option', { value: '' }, 'All types'),
-    h('option', { value: 'emergency', selected: state.type === 'emergency' ? true : null }, 'Engine and battery'),
+    h('option', { value: 'emergency', selected: state.type === 'emergency' ? true : null }, 'Engine temperature'),
     h('option', { value: 'gasket', selected: state.type === 'gasket' ? true : null }, 'Head gasket'));
   const vehicleSel = h('select', { class: 'select select-sm', 'aria-label': 'Vehicle', style: { width: 'auto', minWidth: '140px' } },
     h('option', { value: '' }, 'All vehicles'));

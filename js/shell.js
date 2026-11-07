@@ -236,7 +236,7 @@
           h('div', { class: 'row' },
             a.vehicle_plate ? Q.plate(a.vehicle_plate, 'lg') : null,
             a.value != null && a.parameter !== 'gasket_suspect'
-              ? h('div', { class: 'alarm-value' }, Q.fmtNum(a.value, a.parameter === 'voltage' ? 1 : 0, a.parameter === 'voltage' ? ' V' : a.parameter && a.parameter.startsWith('coolant') ? '°C' : a.parameter === 'stft' || a.parameter === 'ltft' ? '%' : ''))
+              ? h('div', { class: 'alarm-value' }, Q.fmtNum(a.value, 0, a.parameter && a.parameter.startsWith('coolant') ? '°C' : a.parameter === 'stft' || a.parameter === 'ltft' ? '%' : ''))
               : null),
           h('p', { style: { color: 'var(--ink)', fontSize: '15px' } }, a.message || 'Critical reading'),
           h('dl', { class: 'kv' },

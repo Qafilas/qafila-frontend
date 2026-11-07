@@ -125,7 +125,7 @@
 
     if (!list.length) {
       mount(alertsBody, Q.empty('check', alertFilter === 'red' ? 'No critical alerts' : 'All clear',
-        'Coolant, battery and fuel trim are inside safe limits on every vehicle. New alerts appear here the moment they fire.'));
+        'Coolant and fuel trim are inside safe limits on every vehicle. New alerts appear here the moment they fire.'));
       return;
     }
     mount(alertsBody, list.slice(0, 40).map(alertRow));

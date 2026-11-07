@@ -11,7 +11,7 @@ Fleet manager dashboard for Qafila. Plain HTML, CSS and JavaScript, no framework
 | Operations | `pages/operations.html` | Active shifts with live readings; pairing board (drag a driver onto a vehicle). |
 | Drivers | `pages/drivers.html` | Add, inline edit, activate/deactivate, delete with confirmation. |
 | Vehicles | `pages/vehicles.html` | Add, inline edit, type, VIN, paired driver, Board status with Assign / Change (wireless board binding). |
-| Vehicle | `pages/vehicle.html?id=` | One vehicle: driver, board, 30-day stats, daily coolant / voltage / fuel trim trends with warning lines, open predictions, alerts, recent shifts. |
+| Vehicle | `pages/vehicle.html?id=` | One vehicle: driver, board, 30-day stats, daily coolant / fuel trim trends with warning lines, open predictions, alerts, recent shifts. |
 | Alerts | `pages/alerts.html` | Every alert, open and resolved, filterable by status, level, type, vehicle and date. |
 | Shifts | `pages/shifts.html` | Filterable history, CSV export, click a row for its report. |
 | Shift report | `pages/shift-report.html?id=` | Header, behaviour summary, event log, alerts, predictions, summary stats, speed/coolant chart. Printable. |

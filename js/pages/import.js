@@ -21,7 +21,7 @@
 
   /* ---------- What the CSV must contain ---------- */
   const GUIDE = [
-    ['name', 'Required', 'Ahmed Al-Mansoori', "Driver's full name."],
+    ['name', 'Required', 'Driver 1', "The driver's name as it should appear on the dashboard."],
     ['employee_id', 'Required', 'EMP-0142', 'Unique for each driver. Used to update the same driver next time.'],
     ['phone', 'Optional', '+97455512345', 'Shown with alerts so you can call the driver.'],
     ['license', 'Optional', 'QA-123456', "Driver's licence number."],
@@ -53,9 +53,9 @@
       h('div', { class: 'field-label' }, 'Example rows'),
       h('pre', { class: 'csv-example' },
         'name,employee_id,phone,license,plate,make,model,year,vehicle_type,vin,shift_start,shift_end,days\n' +
-        'Ahmed Al-Mansoori,EMP-0142,+97455512345,QA-123456,12345,Toyota,Hiace,2020,bus,JTFSX23P0L6123456,06:00 AM,02:00 PM,Sun-Thu\n' +
-        'Khalid Al-Kuwari,EMP-0187,+97455567890,QA-234567,67890,Nissan,Urvan,2022,bus,,02:00 PM,10:00 PM,Sun-Thu\n' +
-        'Sara Al-Thani,EMP-0203,+97455598765,QA-345678,11111,Ford,Transit,2023,truck,,10:00 PM,06:00 AM,Mon-Fri'),
+        'Driver 1,EMP-0142,+97455512345,QA-123456,12345,Toyota,Hiace,2020,bus,JTFSX23P0L6123456,06:00 AM,02:00 PM,Sun-Thu\n' +
+        'Driver 2,EMP-0187,+97455567890,QA-234567,67890,Nissan,Urvan,2022,bus,,02:00 PM,10:00 PM,Sun-Thu\n' +
+        'Driver 3,EMP-0203,+97455598765,QA-345678,11111,Ford,Transit,2023,truck,,10:00 PM,06:00 AM,Mon-Fri'),
       h('ul', { class: 'how-list' },
         h('li', null, 'Write the column names exactly as shown. Their order does not matter.'),
         h('li', null, 'One driver can appear on more than one row if they drive more than one vehicle.'),

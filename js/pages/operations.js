@@ -24,7 +24,6 @@
             h('th', null, 'Driver'),
             h('th', null, 'Started'),
             h('th', null, 'Coolant'),
-            h('th', null, 'Battery'),
             h('th', null, 'Speed'),
             h('th', null, 'Status'),
             h('th', { class: 'actions' }, h('span', { class: 'sr-only' }, 'Actions')))),
@@ -34,7 +33,7 @@
         h('h2', { class: 't-h2', id: 'pair-title' }, 'Pairing board', h('div', null, pairNote))),
       h('div', { class: 'panel-body flush' }, pairBody)));
 
-  mount(liveBody, Q.loadingRows(8, 3));
+  mount(liveBody, Q.loadingRows(7, 3));
   mount(pairBody, h('div', { style: { padding: '20px' } }, h('div', { class: 'skeleton', style: { height: '200px' } })));
 
   /* ============ Live shifts ============ */
@@ -95,7 +94,6 @@
         h('div', { class: 'cell-main' }, Q.fmtTime(started)),
         h('div', { class: 'cell-sub' }, dur)),
       reading(Q.fmtNum(t.coolant, 0), 0, '°C', Q.readingClass('coolant', t.coolant)),
-      reading(Q.fmtNum(t.voltage, 1), 1, 'V', Q.readingClass('voltage', t.voltage)),
       reading(Q.fmtNum(t.speed, 0), 0, 'km/h'),
       h('td', null,
         h('span', { class: 'state' }, Q.led(lv), label),

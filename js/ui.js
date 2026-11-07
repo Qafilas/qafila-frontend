@@ -516,7 +516,6 @@
     if (v === null || v === undefined || isNaN(Number(v))) return '';
     v = Number(v);
     if (param === 'coolant') return v >= 115 ? 'crit' : v >= 105 ? 'warn' : '';
-    if (param === 'voltage') return v <= 0 ? '' : v < 13.0 ? 'crit' : v <= 13.5 ? 'warn' : '';
     if (param === 'trim') return Math.abs(v) > 15 ? 'warn' : '';
     return '';
   }
@@ -525,15 +524,13 @@
     coolant: 'Cooling system',
     stft: 'Short-term fuel trim',
     ltft: 'Long-term fuel trim',
-    voltage: 'Charging system',
     load_speed: 'Engine efficiency'
   };
-  const STREAM_UNIT = { coolant: '°C', voltage: 'V', stft: '%', ltft: '%', load_speed: '' };
+  const STREAM_UNIT = { coolant: '°C', stft: '%', ltft: '%', load_speed: '' };
 
   function alertValue(a) {
     if (a.value === null || a.value === undefined || a.parameter === 'gasket_suspect') return null;
     const p = a.parameter || '';
-    if (p === 'voltage') return Number(a.value).toFixed(1) + ' V';
     if (p.startsWith('coolant')) return (p === 'coolant_spike' ? '+' : '') + Number(a.value).toFixed(0) + '°C';
     if (p === 'stft' || p === 'ltft') return Number(a.value).toFixed(1) + '%';
     return String(a.value);

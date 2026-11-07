@@ -72,7 +72,7 @@
     mount(predBody, list.map(p => {
       const w = [p.w1, p.w2, p.w3, p.w4].filter(v => v != null);
       const unit = Q.STREAM_UNIT[p.stream] || '';
-      const fmt = v => Number(v).toFixed(p.stream === 'voltage' ? 2 : 1);
+      const fmt = v => Number(v).toFixed(1);
       const msg = p.message || '';
       const rec = msg.includes('Recommendation:')
         ? msg.slice(msg.indexOf('Recommendation:') + 'Recommendation:'.length).trim()
@@ -94,7 +94,7 @@
             p.acknowledged && !p.resolved ? h('span', { class: 'tag', style: { marginLeft: '8px' } }, 'Acknowledged') : null),
           h('div', { class: 'pred-msg' },
             h('span', { class: 'pred-slope ' + (p.resolved ? '' : 't-warn') }, `${p.slope > 0 ? '+' : ''}${Number(p.slope).toFixed(2)} ${unit} per week`),
-            ` against a threshold of ${p.stream === 'voltage' ? '-' : '+'}${p.threshold}. `,
+            ` against a threshold of +${p.threshold}. `,
             rec || ''),
           h('div', { class: 'cell-sub', style: { marginTop: '4px' } }, `Found ${Q.fmtDateTime(p.ts)}, from ${p.weeks_qualifying || w.length} weeks of data`)),
         h('div', null,
